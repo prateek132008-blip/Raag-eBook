@@ -313,7 +313,11 @@ document.addEventListener("DOMContentLoaded", function () {
     orderPromise = U.gasCall({ action: "createOrder", attemptId: a.attemptId }, 15000)
       .then(function (res) {
         if (!res || !res.ok || !/^order_/.test(res.rzpOrderId || "")) throw new Error("createOrder: " + JSON.stringify(res));
-        if (attempt === a) { a.rzpOrderId = res.rzpOrderId; saveAttempt(); }
+        if (attempt === a) {
+          a.rzpOrderId = res.rzpOrderId;
+          if (Number(res.amount) > 0) a.amount = Number(res.amount);   // paise, from the server
+          saveAttempt();
+        }
         return a;
       })
       .finally(function () { orderPromise = null; });
@@ -412,7 +416,7 @@ document.addEventListener("DOMContentLoaded", function () {
     failedThisOpen = null;
     var options = {
       key: C.RAZORPAY_KEY_ID,
-      amount: PRICE * 100,               // paise; the server-side order uses the same server-side price
+      amount: (a.rzpOrderId && a.amount) || PRICE * 100,   // paise; with an order Razorpay uses the order's server-set amount
       currency: C.CURRENCY,
       name: C.BUSINESS_NAME,
       description: "30 Raag eBook — Lifetime Access",
@@ -433,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function () {
       theme: { color: "#8E1B1B" },
       retry: { enabled: true },
       handler: function (resp) {
-        completePurchase({ paymentId: resp.razorpay_payment_id, rzpOrderId: resp.razorpay_order_id || a.rzpOrderId || "" }, "handler");
+        completePurchase({ paymentId: resp.razorpay_payment_id, rzpOrderId: resp.razorpay_order_id || a.openOrderId || "" }, "handler");
       },
       modal: {
         confirm_close: true,             // "Are you sure?" before closing mid-payment
@@ -441,6 +445,11 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     };
     if (a.rzpOrderId) options.order_id = a.rzpOrderId;
+    // The order this checkout ACTUALLY uses. If order creation was slow the
+    // window opens without one, and a.rzpOrderId may arrive a moment later —
+    // status checks must then look up the payment by attempt ID, not by that
+    // (unused, empty) order, or a real payment would read as "none".
+    a.openOrderId = options.order_id || "";
 
     try {
       stopPoll();
@@ -467,7 +476,7 @@ document.addEventListener("DOMContentLoaded", function () {
     rzp = null;
     var uncertain = a.appSwitch || (failedThisOpen && /pending|timeout/i.test((failedThisOpen.reason || "") + (failedThisOpen.code || "")));
     revealHelpFloat();
-    if (uncertain && a.rzpOrderId && U.isConfigured(C.GOOGLE_SCRIPT_URL)) {
+    if (uncertain && a.attemptId && U.isConfigured(C.GOOGLE_SCRIPT_URL)) {
       beginStatusCheck(a);
       return;
     }
@@ -478,7 +487,7 @@ document.addEventListener("DOMContentLoaded", function () {
         [supportAction("paid in UPI app, status unclear"), tryAgainAction]);
     } else if (failedThisOpen) {
       showState("error", "Payment wasn't completed.",
-        (failedThisOpen.description ? failedThisOpen.description + " " : "") + "You can try again — the same order is reused, so you won't be charged twice for one purchase.",
+        (failedThisOpen.description ? failedThisOpen.description + " " : "") + "No money was taken for the failed attempt. You can try again.",
         [tryAgainAction, supportAction("payment failed")]);
     } else {
       showState("info", "Payment wasn't completed.", "You closed the payment window. You can try again whenever you're ready.", [tryAgainAction]);
@@ -518,19 +527,22 @@ document.addEventListener("DOMContentLoaded", function () {
      at all ("none") or only failed ones ("failed") — no need to keep the
      customer waiting in those cases. */
   function startPoll(a, every, maxMs, onGiveUp, onDefinite) {
-    if (!a || !a.rzpOrderId || completed) return;
+    if (!a || !a.attemptId || completed) return;
     stopPoll();
-    var token = pollToken, started = Date.now();
+    var token = pollToken, started = Date.now(), definiteSeen = 0;
+    var orderId = a.openOrderId !== undefined ? a.openOrderId : (a.rzpOrderId || "");
     (function tick() {
       if (token !== pollToken || completed) return;
-      U.gasCall({ action: "status", rzpOrderId: a.rzpOrderId, attemptId: a.attemptId }, 15000)
+      U.gasCall({ action: "status", rzpOrderId: orderId, attemptId: a.attemptId }, 15000)
         .then(function (res) {
           if (token !== pollToken || completed) return;
           if (res && res.ok && res.status === "paid" && res.paymentId) {
-            completePurchase({ paymentId: res.paymentId, rzpOrderId: a.rzpOrderId }, "recovered");
+            completePurchase({ paymentId: res.paymentId, rzpOrderId: orderId }, "recovered");
           } else if (res && res.ok && onDefinite && (res.status === "none" || res.status === "failed")) {
-            stopPoll(); onDefinite(res.status);
-          }
+            // Only tell the customer it's safe to pay again after Razorpay has
+            // said so twice in a row (bank/UPI confirmations can lag a few seconds).
+            if (++definiteSeen >= 2) { stopPoll(); onDefinite(res.status); }
+          } else definiteSeen = 0;
         })
         .catch(function () { /* transient — keep trying */ })
         .then(function () {
@@ -547,7 +559,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("visibilitychange", function () {
     if (phase !== "open" || !attempt) return;
     if (document.visibilityState === "hidden") { attempt.appSwitch = true; saveAttempt(); }
-    else if (attempt.rzpOrderId) startPoll(attempt, 4000, 180000, null);
+    else if (attempt.attemptId) startPoll(attempt, 4000, 180000, null);
   });
 
   function retry() {
@@ -582,6 +594,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // page verifies again and the webhook is a third path — none of them
     // delay this redirect.
     U.gasFire({ action: "verify", paymentId: info.paymentId, attemptId: payload.attemptId, rzpOrderId: payload.rzpOrderId });
+    // (success.html verifies again and gets the Drive link; if the browser is
+    //  closed right here, the webhook and the 10-minute reconcile() sweep in
+    //  Apps Script still capture the payment and email the link.)
 
     window.location.replace("success.html?pid=" + encodeURIComponent(info.paymentId) +
       (payload.attemptId ? "&ref=" + encodeURIComponent(payload.attemptId) : ""));
@@ -601,7 +616,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // (b) Page was reloaded / the browser was killed while a payment was open
   //     (common when a phone switches to a UPI app). Ask Razorpay whether that
   //     order got paid; if so, go straight to the download page.
-  if (attempt && attempt.opened && attempt.rzpOrderId && Date.now() - (attempt.openedAt || 0) < 3 * 3600 * 1000 && U.isConfigured(C.GOOGLE_SCRIPT_URL)) {
+  if (attempt && attempt.opened && attempt.attemptId && Date.now() - (attempt.openedAt || 0) < 3 * 3600 * 1000 && U.isConfigured(C.GOOGLE_SCRIPT_URL)) {
     if (banner && !banner.classList.contains("show")) {
       banner.textContent = "Checking the status of your previous payment attempt…";
       banner.classList.add("show");
