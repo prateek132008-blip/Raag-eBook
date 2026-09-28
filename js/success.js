@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
       a.className = "btn btn-primary btn-block"; a.href = link; a.target = "_blank"; a.rel = "noopener";
       a.textContent = "Download Your eBook (Google Drive)";
       var p = document.createElement("p");
-      p.textContent = "Tip: bookmark this page or save the Drive link. " + (res.emailSent || data.email ? "A copy of the link is also emailed to " + (data.email || "your email") + " (check Promotions/Spam)." : "");
+      p.textContent = "Tip: bookmark this page or save the Drive link. " + (res.emailSent || data.email || data.emailHint ? "A copy of the link is also emailed to " + (data.email || data.emailHint || "your email") + " (check Promotions/Spam)." : "");
       box.appendChild(a); box.appendChild(p);
       setSupport("download link not working");
     } else {
@@ -142,6 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (res.status === "paid") {
           if (res.name && !data.name) data.name = res.name;
           if (res.email && !data.email) data.email = res.email;
+          if (!data.email && res.emailHint) data.emailHint = res.emailHint;
           if (res.attemptId && !data.attemptId) data.attemptId = res.attemptId;
           if (res.amount) data.amount = res.amount;
           renderDetails();
