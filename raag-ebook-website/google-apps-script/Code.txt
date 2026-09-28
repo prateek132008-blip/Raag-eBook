@@ -1,0 +1,563 @@
+/**
+ * ==========================================================================
+ *  30 RAAG eBOOK — Google Apps Script backend  (Code.gs)
+ * ==========================================================================
+ *  A NEW, separate script for the Raag product. It does not touch the
+ *  30 Alankaar script or sheet.
+ *
+ *  What it does
+ *    • action=lead         Logs "Checkout Started" rows (fire-and-forget from the site)
+ *    • action=createOrder  Creates the Razorpay order (price is set HERE, server-side)
+ *    • action=status       Asks Razorpay whether an order has been paid (payment recovery)
+ *    • action=verify       Verifies a payment with Razorpay, captures it if needed,
+ *                          marks the row Paid, emails the Drive link (once), sends the
+ *                          Meta CAPI Purchase (once) and returns the Drive link.
+ *    • doPost              Razorpay webhook (a third, independent confirmation path)
+ *
+ *  SETUP (full walkthrough in SETUP_GUIDE.md → section C)
+ *    1. Fill in the CONFIG block below (DRIVE_LINK at minimum).
+ *    2. Project Settings → Script Properties → add:
+ *         RAZORPAY_KEY_SECRET      (required — the SAME secret as the Alankaar script)
+ *         META_PIXEL_ID            (optional — only for server-side CAPI)
+ *         META_CAPI_ACCESS_TOKEN   (optional — only for server-side CAPI)
+ *         META_TEST_EVENT_CODE     (optional — only while testing CAPI in Events Manager)
+ *    3. Run  setup()  once from the editor (creates the header row + asks for permissions).
+ *    4. Run  testRazorpay()  once (checks the key/secret pair).
+ *    5. Deploy → New deployment → Web app → Execute as: Me, Who has access: Anyone.
+ *    6. Paste the /exec URL into js/config.js → GOOGLE_SCRIPT_URL.
+ *
+ *  SECRETS: never paste the Razorpay secret or the Meta token into this file —
+ *  Script Properties are not visible to anyone who only has the web-app URL.
+ * ==========================================================================
+ */
+
+/* ============================== CONFIG ============================== */
+const CONFIG = {
+  // ★ THE ONLY PLACE THE GOOGLE DRIVE LINK LIVES.
+  //   It is returned to the browser ONLY after a payment is verified.
+  //   Use a "Anyone with the link — Viewer" Google Drive share link.
+  DRIVE_LINK: 'PASTE_RAAG_GOOGLE_DRIVE_LINK_HERE',
+
+  // The NEW Raag Google Sheet (from its URL: /spreadsheets/d/<THIS PART>/edit)
+  SHEET_ID: '1YIWm2LZyqI_yLYV0VaJufZmZdk8gdKriuW-kS0vEAJ0',
+  SHEET_NAME: 'Orders',                 // tab is created by setup() if missing
+
+  // Product — must match js/config.js
+  PRODUCT_ID: 'raag-ebook',
+  PRODUCT_NAME: '30 Raag — Detailed Raag Parichay & Notation',
+  PRICE_INR: 999,                       // the price actually charged (server-side)
+  CURRENCY: 'INR',
+
+  // Razorpay PUBLIC key id (same as js/config.js). Secret → Script Properties.
+  RAZORPAY_KEY_ID: 'rzp_live_Sczvk68iCuryMo',
+
+  // Delivery email (sent once per paid order, as a backup to the download page)
+  SEND_EMAIL: true,
+  BUSINESS_NAME: 'The Flute Room',
+  SUPPORT_EMAIL: 'prateek132008@gmail.com',
+  WHATSAPP_NUMBER: '918709268496',
+
+  // Meta Conversions API (only used if META_PIXEL_ID + META_CAPI_ACCESS_TOKEN
+  // Script Properties are set). Graph API version — update when Meta retires it.
+  GRAPH_API_VERSION: 'v25.0',
+  // Public URL of the product page, used as event_source_url for CAPI.
+  // Leave '' to use the landing page recorded for the order.
+  SITE_URL: '',
+
+  TIMEZONE: 'Asia/Kolkata'
+};
+
+/* Sheet columns (order matters — setup() writes this header row). */
+const COLS = [
+  'Timestamp', 'Updated At', 'Attempt ID', 'Name', 'Email', 'Phone',
+  'Product', 'Amount (INR)', 'Currency', 'Payment Status',
+  'Razorpay Payment ID', 'Razorpay Order ID', 'Payment Method', 'Verified Via',
+  'UTM Source', 'UTM Medium', 'UTM Campaign', 'UTM Content', 'UTM Term',
+  'Landing Page', 'Referrer', 'fbclid', 'fbp', 'fbc', 'External ID', 'User Agent',
+  'Email Sent', 'CAPI Sent', 'Notes'
+];
+const C_ = {}; COLS.forEach(function (n, i) { C_[n] = i + 1; });   // name → 1-based column
+
+/* ============================== ROUTING ============================== */
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  try {
+    switch (p.action) {
+      case 'lead':        return json_(handleLead_(p));
+      case 'createOrder': return json_(handleCreateOrder_(p));
+      case 'status':      return json_(handleStatus_(p));
+      case 'verify':      return json_(handleVerify_(p));
+      case 'ping':        return json_({ ok: true, status: 'alive' });
+      default:            return json_({ ok: false, error: 'unknown_action' });
+    }
+  } catch (err) {
+    console.error('doGet ' + p.action + ' failed: ' + (err && err.stack || err));
+    return json_({ ok: false, error: 'server_error' });
+  }
+}
+
+/** Razorpay webhook. Apps Script cannot read request headers, so the
+ *  X-Razorpay-Signature can't be checked here. Instead the payload is treated
+ *  only as a HINT: the payment is re-fetched from Razorpay's API with our
+ *  secret, so a forged webhook can't mark anything paid. */
+function doPost(e) {
+  try {
+    const body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    const ev = String(body.event || '');
+    const pay = body.payload && body.payload.payment && body.payload.payment.entity;
+    if (pay && /^pay_/.test(pay.id || '') && /payment\.(captured|authorized)|order\.paid/.test(ev)) {
+      const fresh = rzp_('get', '/payments/' + pay.id);
+      if (fresh.ok) processPayment_(fresh.body, 'webhook', {});
+    }
+  } catch (err) {
+    console.error('webhook error: ' + (err && err.stack || err));
+  }
+  return json_({ ok: true });
+}
+
+/* ============================== HANDLERS ============================== */
+
+/** Pre-payment log (never marks anything Paid). One row per Attempt ID. */
+function handleLead_(p) {
+  const attemptId = cleanAttempt_(p.attemptId);
+  if (!attemptId) return { ok: false, error: 'bad_attempt' };
+  const email = String(p.email || '').trim().toLowerCase();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return { ok: false, error: 'bad_email' };
+
+  const fields = {
+    'Attempt ID': attemptId,
+    'Name': clip_(p.name, 100), 'Email': clip_(email, 120), 'Phone': clip_(String(p.phone || '').replace(/[^\d+ ]/g, ''), 20),
+    'Product': CONFIG.PRODUCT_ID, 'Amount (INR)': CONFIG.PRICE_INR, 'Currency': CONFIG.CURRENCY,
+    'Razorpay Order ID': /^order_[A-Za-z0-9]{6,40}$/.test(p.rzpOrderId || '') ? p.rzpOrderId : '',
+    'UTM Source': clip_(p.utm_source, 150), 'UTM Medium': clip_(p.utm_medium, 150), 'UTM Campaign': clip_(p.utm_campaign, 200),
+    'UTM Content': clip_(p.utm_content, 200), 'UTM Term': clip_(p.utm_term, 150),
+    'Landing Page': clip_(p.landing_page, 500), 'Referrer': clip_(p.referrer, 300), 'fbclid': clip_(p.fbclid, 300),
+    'fbp': clip_(p.fbp, 200), 'fbc': clip_(p.fbc, 400), 'External ID': clip_(p.external_id, 60), 'User Agent': clip_(p.user_agent, 300)
+  };
+
+  return withLock_(function () {
+    const sh = sheet_();
+    const row = findRow_(sh, 'Attempt ID', attemptId);
+    if (row) {
+      const cur = readRow_(sh, row);
+      const upd = {};
+      Object.keys(fields).forEach(function (k) {
+        // Customer details may be corrected on a retry; attribution keeps the first value.
+        const editable = ['Name', 'Email', 'Phone', 'Razorpay Order ID'].indexOf(k) !== -1;
+        if (fields[k] !== '' && (editable || cur[k] === '' || cur[k] === null)) upd[k] = fields[k];
+      });
+      if (cur['Payment Status'] !== 'Paid') upd['Payment Status'] = 'Checkout Started';
+      writeRow_(sh, row, upd);
+    } else {
+      fields['Timestamp'] = now_();
+      fields['Payment Status'] = 'Checkout Started';
+      appendRow_(sh, fields);
+    }
+    return { ok: true };
+  });
+}
+
+/** Creates (once per attempt) the Razorpay order. Price comes from CONFIG,
+ *  never from the browser. */
+function handleCreateOrder_(p) {
+  const attemptId = cleanAttempt_(p.attemptId);
+  if (!attemptId) return { ok: false, error: 'bad_attempt' };
+  const cache = CacheService.getScriptCache();
+  const key = 'ord_' + attemptId;
+  const hit = cache.get(key);
+  if (hit) return { ok: true, rzpOrderId: hit, attemptId: attemptId };
+
+  return withLock_(function () {
+    const again = cache.get(key);
+    if (again) return { ok: true, rzpOrderId: again, attemptId: attemptId };
+    const res = rzp_('post', '/orders', {
+      amount: CONFIG.PRICE_INR * 100,
+      currency: CONFIG.CURRENCY,
+      receipt: attemptId.slice(0, 40),
+      payment_capture: 1,
+      notes: { product: CONFIG.PRODUCT_ID, attempt_id: attemptId }
+    });
+    if (!res.ok || !res.body.id) {
+      console.error('createOrder failed: ' + JSON.stringify(res.body));
+      return { ok: false, error: 'razorpay_error' };
+    }
+    cache.put(key, res.body.id, 21600);                   // 6 h
+    cache.put('ordprod_' + res.body.id, attemptId, 21600);
+    const sh = sheet_();
+    const row = findRow_(sh, 'Attempt ID', attemptId);
+    if (row) writeRow_(sh, row, { 'Razorpay Order ID': res.body.id });
+    return { ok: true, rzpOrderId: res.body.id, attemptId: attemptId };
+  });
+}
+
+/** Has this order been paid? Used by the site's recovery checks.
+ *  Returns status: paid | pending | failed | none */
+function handleStatus_(p) {
+  const orderId = String(p.rzpOrderId || '');
+  if (!/^order_[A-Za-z0-9]{6,40}$/.test(orderId)) return { ok: false, error: 'bad_order' };
+  const res = rzp_('get', '/orders/' + orderId + '/payments');
+  if (!res.ok) return { ok: false, error: 'razorpay_error' };
+  const items = (res.body && res.body.items) || [];
+  if (!items.length) return { ok: true, status: 'none' };
+
+  const good = items.filter(function (x) { return x.status === 'captured' || x.status === 'authorized'; })[0];
+  if (good) {
+    const r = processPayment_(good, 'status', { attemptId: cleanAttempt_(p.attemptId) });
+    if (r.status === 'paid') return { ok: true, status: 'paid', paymentId: good.id };
+    return { ok: true, status: r.status === 'authorized' ? 'pending' : r.status };
+  }
+  const pending = items.some(function (x) { return x.status === 'created'; });
+  return { ok: true, status: pending ? 'pending' : 'failed' };
+}
+
+/** Verifies one payment and (only if paid) returns the Drive link. */
+function handleVerify_(p) {
+  const paymentId = String(p.paymentId || '');
+  if (!/^pay_[A-Za-z0-9]{6,40}$/.test(paymentId)) return { ok: false, error: 'bad_payment' };
+
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get('paid_' + paymentId);
+  if (cached) return paidResponse_(JSON.parse(cached));
+
+  const res = rzp_('get', '/payments/' + paymentId);
+  if (res.code === 400 || res.code === 404) return { ok: true, status: 'not_found' };
+  if (!res.ok) return { ok: false, error: 'razorpay_error' };
+  const r = processPayment_(res.body, 'verify', { attemptId: cleanAttempt_(p.attemptId) });
+  if (r.status === 'paid') return paidResponse_(r.info);
+  return { ok: true, status: r.status };
+}
+
+function paidResponse_(info) {
+  return {
+    ok: true, status: 'paid',
+    driveLink: driveLinkConfigured_() ? CONFIG.DRIVE_LINK : null,
+    name: info.name || '', email: info.email || '', phone: info.phone || '',
+    amount: CONFIG.PRICE_INR, attemptId: info.attemptId || '', emailSent: !!info.emailSent
+  };
+}
+
+/* ============================== CORE: PROCESS A PAYMENT ==============================
+ * Idempotent: can be called any number of times for the same payment (verify from
+ * the checkout page, verify from the success page, status polls, webhook) and it
+ * results in ONE Paid row, ONE email and ONE CAPI event.
+ */
+function processPayment_(pay, via, hint) {
+  hint = hint || {};
+  const notes = pay.notes || {};
+
+  // 1. Is this OUR product? (Same Razorpay account also sells other products.)
+  const ours = notes.product === CONFIG.PRODUCT_ID ||
+    (pay.order_id && CacheService.getScriptCache().get('ordprod_' + pay.order_id));
+  if (!ours) return { status: 'wrong_product' };
+
+  // 2. Right amount / currency?
+  if (Number(pay.amount) !== CONFIG.PRICE_INR * 100 || pay.currency !== CONFIG.CURRENCY) {
+    logMismatch_(pay, via);
+    return { status: 'amount_mismatch' };
+  }
+
+  // 3. Status — capture if only authorised (e.g. an order-less fallback payment).
+  if (pay.status === 'authorized') {
+    const cap = rzp_('post', '/payments/' + pay.id + '/capture', { amount: pay.amount, currency: pay.currency });
+    if (cap.ok && cap.body.status === 'captured') pay = cap.body;
+    else {
+      const re = rzp_('get', '/payments/' + pay.id);       // maybe captured concurrently
+      if (re.ok) pay = re.body;
+    }
+  }
+  if (pay.status === 'refunded' || pay.refund_status === 'full') return { status: 'refunded' };
+  if (pay.status === 'failed') return { status: 'failed' };
+  if (pay.status !== 'captured') return { status: pay.status === 'authorized' ? 'authorized' : 'pending' };
+
+  // 4. Record it (under a lock so parallel calls can't create two rows).
+  const attemptId = cleanAttempt_(notes.attempt_id) || hint.attemptId || '';
+  const phone = String(pay.contact || '').replace(/[^\d+]/g, '');
+  const email = String(pay.email || '').trim().toLowerCase();
+  let info, doEmail = false, doCapi = false, row;
+
+  withLock_(function () {
+    const sh = sheet_();
+    row = findRow_(sh, 'Razorpay Payment ID', pay.id);
+    let note = '';
+    if (!row && attemptId) {
+      const r = findRow_(sh, 'Attempt ID', attemptId);
+      if (r) {
+        const cur = readRow_(sh, r);
+        if (cur['Payment Status'] === 'Paid' && cur['Razorpay Payment ID'] && cur['Razorpay Payment ID'] !== pay.id) {
+          note = 'POSSIBLE DUPLICATE PAYMENT — same attempt already paid by ' + cur['Razorpay Payment ID'] + '. Check & refund if needed.';
+        } else row = r;
+      }
+    }
+    if (!row && pay.order_id) {
+      const r2 = findRow_(sh, 'Razorpay Order ID', pay.order_id);
+      if (r2 && !readRow_(sh, r2)['Razorpay Payment ID']) row = r2;
+    }
+    if (!note && email) note = recentPaidByEmail_(sh, email, pay.id, row);
+
+    const upd = {
+      'Updated At': now_(), 'Payment Status': 'Paid', 'Razorpay Payment ID': pay.id,
+      'Razorpay Order ID': pay.order_id || '', 'Payment Method': clip_(pay.method, 30),
+      'Amount (INR)': pay.amount / 100, 'Currency': pay.currency, 'Product': CONFIG.PRODUCT_ID
+    };
+    if (row) {
+      const cur = readRow_(sh, row);
+      if (!cur['Verified Via']) upd['Verified Via'] = via;
+      if (!cur['Name'] && notes.customer_name) upd['Name'] = clip_(notes.customer_name, 100);
+      if (!cur['Email'] && email) upd['Email'] = email;
+      if (!cur['Phone'] && phone) upd['Phone'] = phone;
+      if (!cur['Attempt ID'] && attemptId) upd['Attempt ID'] = attemptId;
+      if (note && String(cur['Notes']).indexOf(note) === -1) upd['Notes'] = (cur['Notes'] ? cur['Notes'] + ' | ' : '') + note;
+      writeRow_(sh, row, upd);
+    } else {
+      upd['Timestamp'] = now_(); upd['Attempt ID'] = attemptId; upd['Verified Via'] = via;
+      upd['Name'] = clip_(notes.customer_name, 100); upd['Email'] = email; upd['Phone'] = phone;
+      upd['External ID'] = clip_(notes.external_id, 60); upd['fbp'] = clip_(notes.fbp, 200); upd['fbc'] = clip_(notes.fbc, 400);
+      upd['UTM Source'] = clip_(notes.utm_source, 150); upd['UTM Medium'] = clip_(notes.utm_medium, 150);
+      upd['UTM Campaign'] = clip_(notes.utm_campaign, 200); upd['User Agent'] = clip_(notes.user_agent, 300);
+      upd['Notes'] = note;
+      row = appendRow_(sh, upd);
+    }
+
+    // Claim the one-time side effects inside the lock.
+    const cur = readRow_(sh, row);
+    doEmail = CONFIG.SEND_EMAIL && driveLinkConfigured_() && claimable_(cur['Email Sent']) && !!(cur['Email'] || email);
+    doCapi = capiConfigured_() && claimable_(cur['CAPI Sent']);
+    const claim = {};
+    if (doEmail) claim['Email Sent'] = 'Sending… ' + now_();
+    if (doCapi) claim['CAPI Sent'] = 'Sending… ' + now_();
+    if (doEmail || doCapi) writeRow_(sh, row, claim);
+    info = {
+      name: cur['Name'] || notes.customer_name || '', email: cur['Email'] || email, phone: cur['Phone'] || phone,
+      attemptId: cur['Attempt ID'] || attemptId, emailSent: /^Yes/.test(String(cur['Email Sent'])), row: cur
+    };
+  });
+
+  // 5. One-time side effects, outside the lock.
+  const sh = sheet_();
+  if (doEmail) {
+    const r = sendDeliveryEmail_(info, pay);
+    writeRow_(sh, row, { 'Email Sent': r });
+    info.emailSent = /^Yes/.test(r);
+  }
+  if (doCapi) writeRow_(sh, row, { 'CAPI Sent': sendCapiPurchase_(info, pay) });
+
+  const slim = { name: info.name, email: info.email, phone: info.phone, attemptId: info.attemptId, emailSent: info.emailSent };
+  CacheService.getScriptCache().put('paid_' + pay.id, JSON.stringify(slim), 21600);
+  return { status: 'paid', info: slim };
+}
+
+/** Empty, a previous failure, or a stale "Sending…" (>5 min) can be (re)tried. */
+function claimable_(v) {
+  v = String(v || '');
+  if (!v || /^Failed/.test(v)) return true;
+  const m = v.match(/^Sending… (.+)$/);
+  if (m) { const t = new Date(m[1].replace(' ', 'T') + '+05:30').getTime(); return !isNaN(t) && Date.now() - t > 5 * 60 * 1000; }
+  return false;
+}
+
+/** Flags a second Paid row for the same email in the last 24 h. */
+function recentPaidByEmail_(sh, email, paymentId, ownRow) {
+  const last = sh.getLastRow();
+  if (last < 2) return '';
+  const data = sh.getRange(2, 1, last - 1, COLS.length).getValues();
+  for (let i = data.length - 1; i >= 0 && i >= data.length - 400; i--) {
+    const r = data[i];
+    if (i + 2 === ownRow) continue;
+    if (String(r[C_['Email'] - 1]).toLowerCase() === email && r[C_['Payment Status'] - 1] === 'Paid' &&
+        r[C_['Razorpay Payment ID'] - 1] && r[C_['Razorpay Payment ID'] - 1] !== paymentId) {
+      const t = new Date(String(r[C_['Updated At'] - 1] || r[0]).replace(' ', 'T') + '+05:30').getTime();
+      if (!isNaN(t) && Date.now() - t < 24 * 3600 * 1000)
+        return 'POSSIBLE DUPLICATE PURCHASE — same email also paid ' + r[C_['Razorpay Payment ID'] - 1] + ' within 24 h. Check & refund if needed.';
+    }
+  }
+  return '';
+}
+
+function logMismatch_(pay, via) {
+  try {
+    withLock_(function () {
+      const sh = sheet_();
+      if (findRow_(sh, 'Razorpay Payment ID', pay.id)) return;
+      appendRow_(sh, {
+        'Timestamp': now_(), 'Updated At': now_(), 'Payment Status': 'AMOUNT MISMATCH', 'Razorpay Payment ID': pay.id,
+        'Razorpay Order ID': pay.order_id || '', 'Amount (INR)': Number(pay.amount) / 100, 'Currency': pay.currency,
+        'Email': pay.email || '', 'Phone': pay.contact || '', 'Verified Via': via, 'Product': CONFIG.PRODUCT_ID,
+        'Notes': 'Paid amount does not match the product price — access NOT granted. Review manually.'
+      });
+    });
+  } catch (e) { console.error(e); }
+}
+
+/* ============================== EMAIL ============================== */
+function sendDeliveryEmail_(info, pay) {
+  try {
+    if (MailApp.getRemainingDailyQuota() < 1) return 'Failed: daily email quota reached';
+    const name = String(info.name || '').split(' ')[0] || 'there';
+    const esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+    const html =
+      '<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#111">' +
+      '<h2 style="color:#8E1B1B">Your 30 Raag eBook is ready 🎉</h2>' +
+      '<p>Hi ' + esc(name) + ',</p>' +
+      '<p>Thank you for purchasing <b>' + esc(CONFIG.PRODUCT_NAME) + '</b> (30 प्रमुख रागों — विस्तृत परिचय एवं स्वर-लिपि). Your payment is confirmed.</p>' +
+      '<p style="margin:26px 0"><a href="' + esc(CONFIG.DRIVE_LINK) + '" style="background:#8E1B1B;color:#fff;padding:14px 22px;border-radius:100px;text-decoration:none;font-weight:bold">Download Your eBook (Google Drive)</a></p>' +
+      '<p>Tip: download a copy to your device. Start with the <b>How to Read</b> section.</p>' +
+      '<p style="font-size:13px;color:#555">Payment ID: ' + esc(pay.id) + (info.attemptId ? '<br>Reference: ' + esc(info.attemptId) : '') + '</p>' +
+      '<p style="font-size:13px;color:#555">This eBook is licensed for your personal use only — please don\'t share the link or the file.</p>' +
+      '<p style="font-size:13px;color:#555">Payment or download problem? WhatsApp us: <a href="https://wa.me/' + CONFIG.WHATSAPP_NUMBER + '">+' + CONFIG.WHATSAPP_NUMBER + '</a></p>' +
+      '<p>— ' + esc(CONFIG.BUSINESS_NAME) + '</p></div>';
+    MailApp.sendEmail({
+      to: info.email, subject: 'Your 30 Raag eBook — download link', htmlBody: html,
+      name: CONFIG.BUSINESS_NAME, replyTo: CONFIG.SUPPORT_EMAIL
+    });
+    return 'Yes ' + now_();
+  } catch (e) {
+    console.error('email failed: ' + e);
+    return 'Failed: ' + String(e).slice(0, 120);
+  }
+}
+
+/* ============================== META CONVERSIONS API ==============================
+ * Server-side Purchase with the SAME event_id as the browser Pixel
+ * ("raag_purchase_<payment_id>"), so Meta deduplicates them into one purchase.
+ * All personal data is normalised + SHA-256 hashed here before sending.
+ * Apps Script can't see the buyer's IP address, so client_ip_address is not sent.
+ */
+function capiConfigured_() {
+  const pr = PropertiesService.getScriptProperties();
+  return /^\d{6,20}$/.test(pr.getProperty('META_PIXEL_ID') || '') && !!pr.getProperty('META_CAPI_ACCESS_TOKEN');
+}
+function sendCapiPurchase_(info, pay) {
+  try {
+    const pr = PropertiesService.getScriptProperties();
+    const cur = info.row || {};
+    const notes = pay.notes || {};
+    const nameParts = String(info.name || '').trim().toLowerCase().split(/\s+/).filter(String);
+    const digits = String(info.phone || '').replace(/\D/g, '');
+    const ph = digits.length === 10 ? '91' + digits : digits;
+    const ud = { country: [sha256_('in')] };
+    if (info.email) ud.em = [sha256_(String(info.email).trim().toLowerCase())];
+    if (ph) ud.ph = [sha256_(ph)];
+    if (nameParts[0]) ud.fn = [sha256_(nameParts[0])];
+    if (nameParts.length > 1) ud.ln = [sha256_(nameParts.slice(1).join(' '))];
+    const ext = cur['External ID'] || notes.external_id;
+    if (ext) ud.external_id = [sha256_(String(ext))];
+    const fbp = cur['fbp'] || notes.fbp, fbc = cur['fbc'] || notes.fbc;
+    if (fbp) ud.fbp = String(fbp);
+    if (fbc) ud.fbc = String(fbc);
+    const ua = cur['User Agent'] || notes.user_agent;
+    if (ua) ud.client_user_agent = String(ua);
+
+    const payload = {
+      data: [{
+        event_name: 'Purchase',
+        event_time: Math.floor((pay.created_at ? pay.created_at * 1000 : Date.now()) / 1000),
+        event_id: 'raag_purchase_' + pay.id,
+        action_source: 'website',
+        event_source_url: CONFIG.SITE_URL || cur['Landing Page'] || undefined,
+        user_data: ud,
+        custom_data: {
+          currency: CONFIG.CURRENCY, value: pay.amount / 100,
+          content_ids: [CONFIG.PRODUCT_ID], content_type: 'product', content_name: CONFIG.PRODUCT_NAME,
+          num_items: 1, order_id: info.attemptId || pay.order_id || pay.id
+        }
+      }]
+    };
+    const test = pr.getProperty('META_TEST_EVENT_CODE');
+    if (test) payload.test_event_code = test;
+    const url = 'https://graph.facebook.com/' + CONFIG.GRAPH_API_VERSION + '/' + pr.getProperty('META_PIXEL_ID') +
+      '/events?access_token=' + encodeURIComponent(pr.getProperty('META_CAPI_ACCESS_TOKEN'));
+    const res = UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', payload: JSON.stringify(payload), muteHttpExceptions: true });
+    if (res.getResponseCode() === 200) return 'Yes ' + now_() + (test ? ' (test)' : '');
+    return 'Failed: ' + res.getResponseCode() + ' ' + res.getContentText().slice(0, 150);
+  } catch (e) {
+    return 'Failed: ' + String(e).slice(0, 150);
+  }
+}
+function sha256_(s) {
+  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(s), Utilities.Charset.UTF_8)
+    .map(function (b) { return ('0' + (b & 0xff).toString(16)).slice(-2); }).join('');
+}
+
+/* ============================== RAZORPAY API ============================== */
+function rzp_(method, path, body) {
+  const secret = PropertiesService.getScriptProperties().getProperty('RAZORPAY_KEY_SECRET');
+  if (!secret) throw new Error('RAZORPAY_KEY_SECRET script property is not set');
+  const opts = {
+    method: method, muteHttpExceptions: true,
+    headers: { Authorization: 'Basic ' + Utilities.base64Encode(CONFIG.RAZORPAY_KEY_ID + ':' + secret) }
+  };
+  if (body) { opts.contentType = 'application/json'; opts.payload = JSON.stringify(body); }
+  const res = UrlFetchApp.fetch('https://api.razorpay.com/v1' + path, opts);
+  const code = res.getResponseCode();
+  let parsed = {};
+  try { parsed = JSON.parse(res.getContentText() || '{}'); } catch (e) {}
+  return { ok: code >= 200 && code < 300, code: code, body: parsed };
+}
+
+/* ============================== SHEET HELPERS ============================== */
+function sheet_() {
+  const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+  let sh = ss.getSheetByName(CONFIG.SHEET_NAME);
+  if (!sh) { sh = ss.insertSheet(CONFIG.SHEET_NAME); writeHeader_(sh); }
+  return sh;
+}
+function writeHeader_(sh) {
+  sh.getRange(1, 1, 1, COLS.length).setValues([COLS]).setFontWeight('bold').setBackground('#F6ECDD');
+  sh.setFrozenRows(1);
+}
+function findRow_(sh, colName, value) {
+  if (!value) return 0;
+  const last = sh.getLastRow();
+  if (last < 2) return 0;
+  const cell = sh.getRange(2, C_[colName], last - 1, 1).createTextFinder(String(value)).matchEntireCell(true).findNext();
+  return cell ? cell.getRow() : 0;
+}
+function readRow_(sh, row) {
+  const v = sh.getRange(row, 1, 1, COLS.length).getValues()[0];
+  const o = {}; COLS.forEach(function (n, i) { o[n] = v[i]; });
+  return o;
+}
+function writeRow_(sh, row, obj) {
+  obj['Updated At'] = obj['Updated At'] || now_();
+  Object.keys(obj).forEach(function (k) {
+    if (C_[k]) sh.getRange(row, C_[k]).setValue(safe_(obj[k]));
+  });
+}
+function appendRow_(sh, obj) {
+  obj['Updated At'] = obj['Updated At'] || now_();
+  const row = COLS.map(function (n) { return obj[n] === undefined || obj[n] === null ? '' : safe_(obj[n]); });
+  sh.appendRow(row);
+  return sh.getLastRow();
+}
+
+/* ============================== UTILITIES ============================== */
+function withLock_(fn) {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(20000)) throw new Error('busy');
+  try { return fn(); } finally { lock.releaseLock(); }
+}
+function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+function now_() { return Utilities.formatDate(new Date(), CONFIG.TIMEZONE, 'yyyy-MM-dd HH:mm:ss'); }
+function clip_(v, n) { return String(v === undefined || v === null ? '' : v).trim().slice(0, n); }
+function cleanAttempt_(v) { v = String(v || '').trim().toUpperCase(); return /^RAAG-[A-Z0-9-]{6,48}$/.test(v) ? v : ''; }
+/** Stops spreadsheet formula injection (a value starting with = + - @ is stored as text). */
+function safe_(v) { return typeof v === 'string' && /^[=+\-@]/.test(v) ? "'" + v : v; }
+function driveLinkConfigured_() { return /^https:\/\/(drive|docs)\.google\.com\//.test(CONFIG.DRIVE_LINK); }
+
+/* ============================== RUN-ONCE / TEST FUNCTIONS ============================== */
+/** Run once from the editor: creates the Orders tab + header and triggers the permission prompt. */
+function setup() {
+  const sh = sheet_();
+  if (sh.getLastRow() === 0 || sh.getRange(1, 1).getValue() !== COLS[0]) writeHeader_(sh);
+  console.log('Sheet ready: ' + sh.getParent().getUrl());
+  console.log('Drive link configured: ' + driveLinkConfigured_());
+  console.log('Razorpay secret set: ' + !!PropertiesService.getScriptProperties().getProperty('RAZORPAY_KEY_SECRET'));
+  console.log('Meta CAPI configured: ' + capiConfigured_());
+  MailApp.getRemainingDailyQuota();   // makes sure the email permission is granted too
+  UrlFetchApp.fetch('https://api.razorpay.com', { muteHttpExceptions: true }); // and external requests
+}
+/** Run once: checks the Razorpay key id + secret pair (reads 1 order, changes nothing). */
+function testRazorpay() {
+  const r = rzp_('get', '/orders?count=1');
+  console.log(r.ok ? 'Razorpay credentials OK' : 'Razorpay error ' + r.code + ': ' + JSON.stringify(r.body));
+}
