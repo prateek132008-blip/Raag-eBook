@@ -34,15 +34,14 @@ window.CONFIG = Object.freeze({
   // ---- Product ----
   PRODUCT_ID: "raag-ebook",   // internal ID — must match CONFIG.PRODUCT_ID in Code.gs
   PRODUCT_NAME: "30 Raag — Detailed Raag Parichay & Notation",
-  PRODUCT_NAME_HI: "30 प्रमुख रागों — विस्तृत परिचय एवं स्वर-लिपि",
-  PRODUCT_PRICE: 999,         // ₹, whole rupees. Must match CONFIG.PRICE_INR in Code.gs
+  PRODUCT_PRICE: 649,         // ₹, whole rupees. Must match CONFIG.PRICE_INR in Code.gs
   CURRENCY: "INR",
 
   // ---- Offer display ----
-  // Struck-through "original" price shown next to ₹999 (display only — the
+  // Struck-through "original" price shown next to ₹649 (display only — the
   // amount charged is always PRODUCT_PRICE / Code.gs PRICE_INR).
   // Set to 0 to hide the struck-through price and the "You save" badge.
-  ORIGINAL_PRICE: 2499,
+  ORIGINAL_PRICE: 2100,
   // Countdown next to the price. Counts down OFFER_TIMER_MINUTES, then
   // restarts (endless loop, per visitor). Set OFFER_TIMER_ENABLED: false to hide.
   OFFER_TIMER_ENABLED: true,
