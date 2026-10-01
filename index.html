@@ -139,8 +139,8 @@
         <img src="assets/raag-sangrah-cover-760.webp"
              srcset="assets/raag-sangrah-cover-480.webp 480w, assets/raag-sangrah-cover-760.webp 760w"
              sizes="(max-width: 430px) 200px, (max-width: 980px) 230px, 380px"
-             width="760" height="976" fetchpriority="high" decoding="async"
-             alt="Cover of the 30 Raag eBook — Raag Sangrah: Bandish, Aaroh–Avroh, Pakad &amp; Taan in English Sargam Notation">
+             width="760" height="1208" fetchpriority="high" decoding="async"
+             alt="Cover of the eBook — 30 Famous Raags: A Complete Guide with Theory and Swara Notation, by Prateek Jha, The Flute Room">
       </div>
       <div class="ebook-ground-shadow" aria-hidden="true"></div>
     </div>
@@ -205,31 +205,13 @@
              alt="Sample page from the 30 Raag eBook: Index of all 30 Raags">
         <div class="ebook-preview-watermark" aria-hidden="true"></div>
 
-        <!-- Final preview slide: "Unlock the Full Raag eBook" (shown after the
-             last sample page; prices are filled from js/config.js). -->
+        <!-- Final preview slide: "Unlock Full Raag eBook" (your design image).
+             The whole slide is a link to the checkout form (#buy). -->
         <div class="ebook-unlock" id="previewUnlock" hidden>
-          <div class="ebook-unlock-card">
-            <div class="ebook-unlock-lock" aria-hidden="true">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
-            </div>
-            <span class="ebook-unlock-eyebrow">End of the free preview</span>
-            <h3>Unlock the Full Raag eBook</h3>
-            <p class="ebook-unlock-lede">All 30 Raags — Bandish, Aaroh–Avroh, Pakad &amp; Taan in clear English sargam notation.</p>
-            <ul class="ebook-unlock-list">
-              <li>30 complete Raags</li>
-              <li>91 printable A4 pages</li>
-              <li>How to Read the Notation guide</li>
-              <li>Lifetime access · instant download</li>
-            </ul>
-            <div class="ebook-unlock-price">
-              <s data-original-price aria-label="Original price">₹2,100</s>
-              <span class="ebook-price-arrow" aria-hidden="true">→</span>
-              <strong data-price>₹649</strong>
-            </div>
-            <span class="ebook-save-badge" data-save-badge>You save ₹1,451</span>
-            <a href="#buy" class="btn btn-primary btn-block ebook-unlock-cta">Unlock the Full eBook — <span data-price>₹649</span></a>
-            <span class="ebook-unlock-note">One-time payment · Secure checkout by Razorpay</span>
-          </div>
+          <a href="#buy" class="ebook-unlock-link" aria-label="Unlock the full Raag eBook — ₹2,100, now ₹649. Go to checkout.">
+            <img src="assets/preview/raag-unlock-full-ebook.webp" width="1054" height="1492" loading="lazy" decoding="async" draggable="false"
+                 alt="Unlock Full Raag eBook — get complete access to all 30 famous Raags with detailed theory and swara notation. For just ₹649 (was ₹2,100). Lifetime access.">
+          </a>
         </div>
       </div>
       <p class="ebook-preview-caption" id="previewCaption" aria-live="polite">Index — all 30 Raags</p>
@@ -602,5 +584,13 @@
   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.3c1.4.8 3.1 1.3 4.8 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
   <span class="label">Payment or download question? Chat with us</span>
 </button>
+<!-- Safety net: if any script fails to load/run, still show all content
+     (sections fade in via JS; without this a JS error leaves the page blank). -->
+<script>
+  setTimeout(function () {
+    var els = document.querySelectorAll(".reveal, .reveal-stagger");
+    for (var i = 0; i < els.length; i++) els[i].classList.add("is-visible");
+  }, 2500);
+</script>
 </body>
 </html>

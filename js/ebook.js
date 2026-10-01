@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("[data-original-price]").forEach(function (el) { el.textContent = U.rupees(ORIGINAL); });
     document.querySelectorAll("[data-save-badge]").forEach(function (el) { el.textContent = "You save " + U.rupees(ORIGINAL - PRICE); });
   } else {
-    document.querySelectorAll("[data-original-price], [data-save-badge]").forEach(function (el) { el.remove(); });
+    document.querySelectorAll("[data-original-price], [data-save-badge], .ebook-price-arrow").forEach(function (el) { el.remove(); });
   }
 
   /* ---- Offer countdown: OFFER_TIMER_MINUTES, then restarts (endless loop).
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
   (function ctaNotes() {
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
-    var GLYPHS = ["सा", "रे", "ग", "म", "प", "ध", "नि", "♪", "♫", "🪈", "🎹", "🪕", "🎸", "🥁"];
+    var GLYPHS = ["S", "R", "G", "M", "P", "D", "N", "♪", "♫", "🪈", "🎹", "🪕", "🎸", "🥁"];   // English sargam, as in the eBook
     document.querySelectorAll(".cta-wrap").forEach(function (wrap, wi) {
       var layer = document.createElement("span"); layer.className = "cta-notes"; layer.setAttribute("aria-hidden", "true");
       wrap.insertBefore(layer, wrap.firstChild);
@@ -170,27 +170,35 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  /* View-only preview (pages rendered from the real eBook as images; the PDF
-     itself is never linked). Right-click/drag disabled + CSS watermark —
-     casual-copy deterrents only. */
+  /* View-only preview (pages rendered from the NEW eBook — Raag Sangrah — as
+     images; the PDF itself is never linked). Right-click/drag disabled + CSS
+     watermark — casual-copy deterrents only. The last slide is the
+     "Unlock the Full Raag eBook" panel (#previewUnlock in index.html). */
   var previews = [
-    { src: "assets/preview/raag-preview-1.webp", cap: "Raag Yaman — page 1 · Parichay, Pakad & Bandish" },
-    { src: "assets/preview/raag-preview-2.webp", cap: "Raag Yaman — page 2 · Antara & Taans" },
-    { src: "assets/preview/raag-preview-3.webp", cap: "Raag Bhupali — page 1" },
-    { src: "assets/preview/raag-preview-4.webp", cap: "Raag Bhairav — page 1" }
+    { src: "assets/preview/raag-new-preview-1.webp", cap: "Index — all 30 Raags" },
+    { src: "assets/preview/raag-new-preview-2.webp", cap: "How to Read the Notation" },
+    { src: "assets/preview/raag-new-preview-3.webp", cap: "Raag Yaman — introduction, Aaroh–Avroh, Pakad & Bandish" },
+    { src: "assets/preview/raag-new-preview-4.webp", cap: "Raag Bhupali — introduction, Bandish & Taans" },
+    { unlock: true, cap: "Unlock the Full Raag eBook" }
   ];
   var pIdx = 0;
+  var pUnlock = document.getElementById("previewUnlock"), pViewer = pUnlock ? pUnlock.parentNode : null;
+  if (!pUnlock) previews = previews.filter(function (p) { return !p.unlock; });
   var pImg = document.getElementById("previewImg"), pCap = document.getElementById("previewCaption"),
       pCount = document.getElementById("previewCounter"), pPrev = document.getElementById("previewPrev"), pNext = document.getElementById("previewNext");
   function renderPreview() {
     if (!pImg) return;
-    pImg.src = previews[pIdx].src;
-    pImg.alt = "Handwritten sample page from the 30 Raag eBook: " + previews[pIdx].cap;
+    var cur = previews[pIdx];
+    if (pUnlock) { pUnlock.hidden = !cur.unlock; pViewer.classList.toggle("is-unlock", !!cur.unlock); }
+    if (!cur.unlock) {
+      pImg.src = cur.src;
+      pImg.alt = "Sample page from the 30 Raag eBook: " + cur.cap;
+    }
     if (pCap) pCap.textContent = previews[pIdx].cap;
     if (pCount) pCount.textContent = (pIdx + 1) + " / " + previews.length;
     if (pPrev) pPrev.disabled = pIdx === 0;
     if (pNext) pNext.disabled = pIdx === previews.length - 1;
-    var nxt = previews[pIdx + 1]; if (nxt) { var pre = new Image(); pre.src = nxt.src; }
+    var nxt = previews[pIdx + 1]; if (nxt && nxt.src) { var pre = new Image(); pre.src = nxt.src; }
   }
   if (pImg) {
     pImg.addEventListener("contextmenu", function (e) { e.preventDefault(); });
@@ -230,7 +238,19 @@ document.addEventListener("DOMContentLoaded", function () {
   function newAttemptId() { return ("RAAG-" + Date.now().toString(36) + "-" + U.randomId(8)).toUpperCase(); }
   function loadAttempt() {
     var a = U.jget("localStorage", ATTEMPT_KEY);
-    if (a && a.attemptId && Date.now() - (a.createdAt || 0) < ATTEMPT_MAX_AGE) return a;
+    if (a && a.attemptId && Date.now() - (a.createdAt || 0) < ATTEMPT_MAX_AGE) {
+      // A saved Razorpay order created at a different (e.g. the previous) price
+      // must never be reused — Razorpay would charge the old amount and the
+      // server would reject it as an amount mismatch. Start a fresh attempt.
+      // (If that old checkout was already opened, keep the attempt so the
+      // reload-recovery check can still find a payment on it via openOrderId,
+      // but drop the old order so a retry creates one at the current price.)
+      if (a.rzpOrderId && Number(a.amount) !== PRICE * 100) {
+        if (!a.opened) return null;
+        delete a.rzpOrderId; delete a.amount;
+      }
+      return a;
+    }
     return null;
   }
   var attempt = loadAttempt();

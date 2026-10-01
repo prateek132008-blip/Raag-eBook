@@ -16,7 +16,7 @@ Search the project for `PASTE` — those three lines are the only placeholders.
 
 | Setting | Default | What it does |
 |---|---|---|
-| `ORIGINAL_PRICE` | `2499` | Struck-through price shown next to ₹999, plus a "You save ₹1,500" badge. `0` hides both. Display only; the amount charged is always ₹999. |
+| `ORIGINAL_PRICE` | `2100` | Struck-through price shown next to ₹649, plus a "You save ₹1,451" badge. `0` hides both. Display only; the amount charged is always ₹649. |
 | `OFFER_TIMER_ENABLED` | `true` | Shows the "Offer ends in" countdown next to the price and above the checkout form |
 | `OFFER_TIMER_MINUTES` | `60` | Countdown length. It restarts automatically when it reaches zero (endless loop, remembered per visitor so refreshing continues it). |
 | `REVIEWS` | empty | "Our Student Reviews" section. Add `{ name: "…", instrument: "…", text: "…" }` entries. The section stays hidden while the list is empty. |
@@ -84,7 +84,7 @@ For server-side Conversions API (optional, see section E), you also add the same
    ```
 4. **Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy.** A code change only goes live after this step.
 
-**Why it's in Code.gs and not `js/config.js`:** every file in `js/` is public. If the link were there, anyone could open `config.js` and download the eBook without paying. The Alankaar site had already moved its link server-side for the same reason. The link is only sent to a browser after the server has confirmed with Razorpay that the payment is captured, ₹999, INR, and for this product. It's still one place to change.
+**Why it's in Code.gs and not `js/config.js`:** every file in `js/` is public. If the link were there, anyone could open `config.js` and download the eBook without paying. The Alankaar site had already moved its link server-side for the same reason. The link is only sent to a browser after the server has confirmed with Razorpay that the payment is captured, ₹649, INR, and for this product. It's still one place to change.
 
 ## C. Connect the new Google Sheet
 
@@ -136,7 +136,7 @@ Razorpay Dashboard → Account & Settings → **Webhooks** → Add New Webhook:
 | Razorpay account | **Unchanged** — same account as Alankaar |
 | Key ID `rzp_live_Sczvk68iCuryMo` | **Unchanged**, already set in both `js/config.js` and `Code.gs` |
 | Key Secret | **Same secret**, copied into the new script's Script Properties |
-| Price | ₹999, set **server-side** in `Code.gs` `PRICE_INR` (the order amount) and shown from `js/config.js` `PRODUCT_PRICE`. Keep both at 999. |
+| Price | ₹649, set **server-side** in `Code.gs` `PRICE_INR` (the order amount) and shown from `js/config.js` `PRODUCT_PRICE`. Keep both at 649. |
 | Product note | `raag-ebook`. This is how the server tells Raag payments apart from Alankaar payments on the same account. |
 | Dashboard → Settings → **Payment Capture** | Check it's **Automatic** (applies to payments made through orders) |
 | Website domain | If Razorpay asks you to whitelist domains for live payments, add the new domain |
@@ -147,11 +147,11 @@ Razorpay Dashboard → Account & Settings → **Webhooks** → Add New Webhook:
 1. Events Manager → your **Pixel (Dataset)** → **Test events** tab.
 2. Enter your website URL → **Open website**. Or install the *Meta Pixel Helper* Chrome extension.
 3. **PageView:** appears once when the page loads.
-4. **ViewContent:** appears once per page load, with `value 999`, `currency INR`, `content_ids ["raag-ebook"]`, `content_type product`.
+4. **ViewContent:** appears once per page load, with `value 649`, `currency INR`, `content_ids ["raag-ebook"]`, `content_type product`.
 5. **InitiateCheckout:** fill the form and press **Get Lifetime Access**. It fires once when Razorpay opens. Close Razorpay and press the button again — it must **not** fire a second time (same attempt).
-6. **Purchase** (real ₹999 payment, then refund yourself from the Razorpay dashboard, or use test mode):
+6. **Purchase** (real ₹649 payment, then refund yourself from the Razorpay dashboard, or use test mode):
    - It fires on the success page only after the server confirms the payment.
-   - Parameters: `value 999`, `currency INR`, `content_ids`, `order_id`, event ID `raag_purchase_pay_…`.
+   - Parameters: `value 649`, `currency INR`, `content_ids`, `order_id`, event ID `raag_purchase_pay_…`.
    - **Refresh** the success page → **no second Purchase**.
 7. **Duplicates:** in Test events, each event should show once per action. If you enabled CAPI, Purchase shows as **Browser + Server — Deduplicated**.
 8. **Event Match Quality:** Events Manager → Overview → click **Purchase** → *Event match quality*. It takes 24–48 h of real traffic to show a score.
@@ -208,7 +208,7 @@ Redeploy. The **CAPI Sent** column shows `Yes …` or the error.
 | 4 | Double / triple tap Pay | Only one Razorpay window |
 | 5 | Close Razorpay | "Payment wasn't completed" + **Try Payment Again**; the small "Payment trouble?" button appears |
 | 6 | Try again | Same Razorpay order reused (see the Orders tab / dashboard); no second InitiateCheckout |
-| 7 | Pay ₹999 (real or test mode) | Redirect to success page → "Payment Successful" → **Download Your eBook** opens your Drive link; Purchase ×1; sheet row becomes **Paid** with Payment ID; email arrives; CAPI Sent = Yes (if enabled) |
+| 7 | Pay ₹649 (real or test mode) | Redirect to success page → "Payment Successful" → **Download Your eBook** opens your Drive link; Purchase ×1; sheet row becomes **Paid** with Payment ID; email arrives; CAPI Sent = Yes (if enabled) |
 | 8 | Refresh success page | Download button still there; **no** second Purchase |
 | 9 | Go back to the product page | Banner: "You have already purchased … Open your download page" |
 | 10 | Open `success.html?pid=pay_FAKE123456` | "Payment not confirmed", no download link |
@@ -230,10 +230,10 @@ Automated tests were run on the finished code with Razorpay, Apps Script and Met
 
 **Product**
 
-- [x] 30 Raag, all 30 listed by name in Hindi + English
-- [x] ₹999
+- [x] 30 Raag, all 30 listed by name — English name above, Hindi name below (spellings as in the eBook)
+- [x] ₹649
 - [x] Lifetime access
-- [x] Handwritten Hindi
+- [x] Typeset, English sargam notation (Raag Sangrah edition)
 - [x] A4 printable
 - [x] How to Read section
 - [x] Google Drive delivery
@@ -260,7 +260,7 @@ Automated tests were run on the finished code with Razorpay, Apps Script and Met
 **Meta**
 
 - [x] ID configurable in one place; old ID removed; `fbq(` exists only in `tracking.js`
-- [x] PageView, ViewContent, InitiateCheckout and Purchase each fire once, with value 999 and INR
+- [x] PageView, ViewContent, InitiateCheckout and Purchase each fire once, with value 649 and INR
 - [x] Every event has an event_id
 - [x] No Purchase on refresh
 - [x] No Purchase on a fake payment ID
@@ -275,7 +275,7 @@ Automated tests were run on the finished code with Razorpay, Apps Script and Met
 **Legal**
 
 - [x] Privacy + Refund policies reused with product references updated
-- [x] New Terms cover: digital product, lifetime access, Drive delivery, personal use, no redistribution/resale/link sharing, IP, handwritten material, support limits, refunds, technical issues
+- [x] New Terms cover: digital product, lifetime access, Drive delivery, personal use, no redistribution/resale/link sharing, IP, support limits, refunds, technical issues
 
 ---
 
@@ -294,3 +294,13 @@ Automated tests were run on the finished code with Razorpay, Apps Script and Met
 9. **Email quota:** consumer Gmail can send about 100 emails/day via Apps Script. The download page doesn't depend on email, so this only affects the backup email.
 10. **"Anyone with the link" Drive sharing** means a buyer could forward the link. The Terms prohibit it. For stronger control you'd need per-buyer sharing, which isn't built.
 11. **Alankaar site:** only `alankaars-ebook.html` was changed (stronger highlight on the floating "Payment failed? — Pay here" button, full text on every phone width). Its Apps Script source wasn't in the zip, so its webhook behaviour couldn't be inspected.
+
+---
+
+## Update log — Raag Sangrah edition (Oct 2026)
+
+- Price: **₹649** (`js/config.js` → `PRODUCT_PRICE`, `google-apps-script/Code.gs` → `PRICE_INR`). Struck-through reference price **₹2,100** (`js/config.js` → `ORIGINAL_PRICE`, display only).
+- Delivery: `Code.gs` → `CONFIG.DRIVE_LINK` = `https://drive.google.com/drive/folders/1eB8Yi4KIq1J6tqz3zKuPVT1zinPuWS8t?usp=sharing` (folder "Raag eBook (updated)").
+- Preview: `assets/preview/raag-new-preview-1…4.webp` (Index, How to Read, Yaman, Bhupali) + the "Unlock the Full Raag eBook" final slide (`#previewUnlock`).
+- **Deploy order:** update the Apps Script FIRST (paste Code.gs → Deploy → Manage deployments → ✏️ Edit → Version: *New version* → Deploy, so the /exec URL stays the same), THEN publish the website files.
+- Order cache key now includes the price, and the site discards a saved Razorpay order created at a different price, so no customer can be charged the old ₹999 amount after the switch.

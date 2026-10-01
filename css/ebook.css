@@ -176,52 +176,16 @@
 .ebook-preview-note { margin-top: 14px; font-size: 12.5px; color: var(--ink-soft); }
 @media (max-width: 430px) { .ebook-preview-card { padding: 20px 16px; } }
 
-/* ---------------- Final preview slide: "Unlock the Full Raag eBook" ---------------- */
-.ebook-preview-viewer.is-unlock { aspect-ratio: auto; }
-.ebook-preview-viewer.is-unlock img,
+/* ---------------- Final preview slide: "Unlock Full Raag eBook" (design image) ---------------- */
+.ebook-preview-viewer.is-unlock #previewImg,
 .ebook-preview-viewer.is-unlock .ebook-preview-watermark,
 .ebook-preview-viewer.is-unlock .ebook-preview-badge { display: none; }
-.ebook-unlock {
-  position: relative; aspect-ratio: 720 / 1018; /* same size as a page; grows if the text needs more room */
-  display: flex; align-items: center; justify-content: center; padding: 22px 18px;
-  background:
-    linear-gradient(180deg, rgba(251,246,238,0.55) 0%, rgba(251,246,238,0.88) 55%, rgba(246,236,221,0.97) 100%),
-    url("../assets/preview/raag-new-preview-locked.webp") center / cover no-repeat;
-}
+.ebook-unlock { position: absolute; inset: 0; z-index: 3; background: #FDF9F4; }
 .ebook-unlock[hidden] { display: none; }
-.ebook-unlock-card {
-  width: 100%; max-width: 360px; background: var(--white); border: 1.5px solid var(--gold);
-  border-radius: var(--radius-lg); box-shadow: 0 18px 40px rgba(43,27,20,0.16);
-  padding: 26px 22px 20px; text-align: center;
-}
-.ebook-unlock-lock {
-  width: 54px; height: 54px; margin: -52px auto 12px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--orange); color: #fff; border: 4px solid var(--white);
-  box-shadow: 0 8px 18px rgba(142,27,27,0.28);
-}
-.ebook-unlock-eyebrow { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); }
-.ebook-unlock h3 { font-family: var(--font-display); font-size: clamp(21px, 3.2vw, 25px); line-height: 1.2; margin: 8px 0 8px; color: var(--ink); }
-.ebook-unlock-lede { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
-.ebook-unlock-list { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 6px; text-align: left; font-size: 13.5px; }
-.ebook-unlock-list li { position: relative; padding-left: 24px; color: var(--ink); }
-.ebook-unlock-list li::before {
-  content: "✓"; position: absolute; left: 0; top: 0; width: 17px; height: 17px; border-radius: 50%;
-  background: rgba(142,27,27,0.1); color: var(--orange); font-size: 11px; font-weight: 800;
-  display: flex; align-items: center; justify-content: center; margin-top: 1px;
-}
-.ebook-unlock-price { display: flex; align-items: baseline; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 16px 0 6px; }
-.ebook-unlock-price s { font-size: 18px; font-weight: 600; color: var(--ink-soft); text-decoration-thickness: 2px; opacity: 0.8; }
-.ebook-unlock-price strong { font-family: var(--font-display); font-size: 38px; font-weight: 800; color: var(--orange); line-height: 1; }
-.ebook-unlock .ebook-save-badge { display: inline-block; margin-bottom: 14px; }
-.ebook-unlock-cta { display: block; white-space: normal; text-align: center; line-height: 1.35; }
-.ebook-unlock-note { display: block; margin-top: 10px; font-size: 11.5px; color: var(--ink-soft); }
+.ebook-unlock-link { display: block; width: 100%; height: 100%; cursor: pointer; }
+.ebook-unlock-link img { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none; }
+.ebook-unlock-link:focus-visible { outline: 3px solid var(--orange); outline-offset: -3px; }
 .ebook-price-arrow { font-size: 18px; font-weight: 700; color: var(--ink-soft); }
-@media (max-width: 430px) {
-  .ebook-unlock { padding: 30px 10px 14px; }
-  .ebook-unlock-card { padding: 24px 16px 16px; }
-  .ebook-unlock-price strong { font-size: 34px; }
-}
 
 /* ---------------- Student reviews (rendered from CONFIG.REVIEWS) ---------------- */
 .ebook-review-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
