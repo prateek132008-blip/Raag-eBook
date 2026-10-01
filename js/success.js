@@ -5,7 +5,7 @@
      download button itself.
    • The Google Drive link is NOT in any front-end file. It is returned by the
      Apps Script "verify" action ONLY after the server has checked this exact
-     payment with Razorpay (captured, ₹999, INR, this product).
+     payment with Razorpay (captured, ₹649, INR, this product).
    • Purchase fires once per payment ID (tracking.js keeps a localStorage flag
      and uses eventID "raag_purchase_<payment_id>", the same event_id the
      server sends via CAPI). Refreshing this page does NOT fire it again.
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     setIcon("ok");
     $("title").textContent = "Payment Successful 🎉";
     $("subtitle").innerHTML = "";
-    $("subtitle").append("Thank you for purchasing ", Object.assign(document.createElement("strong"), { textContent: "30 Raag" }), " — Detailed Raag Parichay & Notation.");
+    $("subtitle").append("Thank you for purchasing ", Object.assign(document.createElement("strong"), { textContent: "30 Raag" }), " — Raag Sangrah, in English sargam notation.");
     var box = $("downloadBox"); box.textContent = "";
     var link = String(res.driveLink || "");
     if (/^https:\/\/(drive|docs)\.google\.com\//.test(link)) {
