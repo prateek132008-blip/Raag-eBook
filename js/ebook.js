@@ -215,7 +215,12 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   /* ============ META PIXEL: PageView + ViewContent (once each) ============ */
-  try { T.start(); T.viewContent(); } catch (e) { /* tracking must never break the page */ }
+  // Returning visitors who already typed their details on this device are
+  // matched with them (better Event Match Quality on PageView/ViewContent).
+  try { T.start(U.getSavedCustomer() || undefined); T.viewContent(); } catch (e) { /* tracking must never break the page */ }
+  // Wake Apps Script now so the Razorpay order is created fast later, and look
+  // up the visitor IP for server-side (CAPI) matching. Neither blocks anything.
+  try { U.warmUp(); U.loadClientIp(); } catch (e) {}
 
   /* ============ CHECKOUT ============ */
   var form = document.getElementById("checkoutForm");
@@ -386,6 +391,7 @@ document.addEventListener("DOMContentLoaded", function () {
       landing_page: attr.landing_page || "", referrer: attr.referrer || "", fbclid: attr.fbclid || "",
       fbp: U.getFbp(), fbc: U.getFbc(), external_id: U.visitorId,
       user_agent: (navigator.userAgent || "").slice(0, 300),
+      ip: U.getClientIp(),
       page: window.location.href.slice(0, 300)
     });
   }
@@ -409,7 +415,7 @@ document.addEventListener("DOMContentLoaded", function () {
     a.customer = d;
     saveAttempt();
 
-    try { T.setUser(d); T.initiateCheckout(a.attemptId); } catch (err) { /* never blocks checkout */ }
+    try { U.saveCustomer(d); T.setUser(d); T.initiateCheckout(a.attemptId); } catch (err) { /* never blocks checkout */ }
     logCheckoutStarted(a, d);
 
     var wait = Math.max(0, Number(C.ORDER_MAX_WAIT_MS) || 0);
@@ -452,7 +458,9 @@ document.addEventListener("DOMContentLoaded", function () {
         utm_source: String(attr.utm_source || "").slice(0, 120),
         utm_medium: String(attr.utm_medium || "").slice(0, 120),
         utm_campaign: String(attr.utm_campaign || "").slice(0, 200),
-        user_agent: String(navigator.userAgent || "").slice(0, 250)
+        user_agent: String(navigator.userAgent || "").slice(0, 250),
+        ip: String(U.getClientIp() || "").slice(0, 45),
+        page_url: (window.location.origin + window.location.pathname).slice(0, 250)
       },
       theme: { color: "#8E1B1B" },
       retry: { enabled: true },
@@ -618,8 +626,17 @@ document.addEventListener("DOMContentLoaded", function () {
     //  closed right here, the webhook and the 10-minute reconcile() sweep in
     //  Apps Script still capture the payment and email the link.)
 
-    window.location.replace("success.html?pid=" + encodeURIComponent(info.paymentId) +
-      (payload.attemptId ? "&ref=" + encodeURIComponent(payload.attemptId) : ""));
+    // Fire the browser Purchase HERE as well, while the buyer is certainly
+    // still on the site (Razorpay has just confirmed it). Many buyers pay in a
+    // UPI app from inside the Instagram/Facebook browser and never reach the
+    // success page. Same eventID as the success page and the server (CAPI),
+    // and a per-payment flag, so Meta counts it once.
+    try { T.setUser(payload.customer); T.purchase({ paymentId: info.paymentId, value: PRICE, orderRef: payload.attemptId }); } catch (e) {}
+
+    var target = "success.html?pid=" + encodeURIComponent(info.paymentId) +
+      (payload.attemptId ? "&ref=" + encodeURIComponent(payload.attemptId) : "");
+    // A short pause lets the Pixel request leave before the page changes.
+    setTimeout(function () { window.location.replace(target); }, 400);
   }
 
   /* ============ RETURNING VISITOR SAFETY ============ */

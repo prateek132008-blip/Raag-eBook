@@ -111,12 +111,48 @@
     try { fetch(gasUrl(params), { method: "GET", mode: "no-cors", keepalive: true, cache: "no-store" }).catch(function () {}); } catch (e) {}
   }
 
+  /* ---- Visitor's public IP, for server-side CAPI matching only (Apps Script
+     can't see it). Fetched once per session, 2.5 s timeout, never blocks. */
+  var IP_KEY = "raag_ip";
+  var clientIp = sget("sessionStorage", IP_KEY) || "";
+  function loadClientIp() {
+    if (clientIp || C.CAPTURE_IP_FOR_CAPI === false || typeof fetch !== "function") return;
+    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    var t = setTimeout(function () { if (ctrl) ctrl.abort(); }, 2500);
+    fetch("https://api64.ipify.org?format=json", { cache: "no-store", signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var ip = String((j && j.ip) || "");
+        if (/^[0-9a-fA-F:.]{7,45}$/.test(ip)) { clientIp = ip; sset("sessionStorage", IP_KEY, ip); }
+      })
+      .catch(function () {})
+      .finally(function () { clearTimeout(t); });
+  }
+  function getClientIp() { return clientIp; }
+
+  /* ---- Wake the Apps Script web app up early (cold starts take seconds). */
+  function warmUp() { gasFire({ action: "ping" }); }
+
+  /* ---- Customer details typed on this device (for Pixel advanced matching
+     on later page views). Kept 30 days, only on this device. */
+  var CUST_KEY = "raag_cust";
+  function saveCustomer(c) {
+    if (!c || !c.email) return;
+    jset("localStorage", CUST_KEY, { fullName: c.fullName || c.name || "", email: c.email, whatsapp: c.whatsapp || c.phone || "", ts: Date.now() });
+  }
+  function getSavedCustomer() {
+    var c = jget("localStorage", CUST_KEY);
+    return c && c.email && Date.now() - (c.ts || 0) < 30 * 24 * 3600 * 1000 ? c : null;
+  }
+
   window.RaagUtil = {
     sget: sget, sset: sset, sremove: sremove, jget: jget, jset: jset,
     getCookie: getCookie, randomId: randomId, visitorId: visitorId,
     getAttribution: getAttribution, getFbp: getFbp, getFbc: getFbc,
     isConfigured: isConfigured, phone10: phone10, splitName: splitName, rupees: rupees,
     gasCall: gasCall, gasFire: gasFire,
+    loadClientIp: loadClientIp, getClientIp: getClientIp, warmUp: warmUp,
+    saveCustomer: saveCustomer, getSavedCustomer: getSavedCustomer,
     debug: /[?&]debug=1\b/.test(window.location.search)
   };
 })();

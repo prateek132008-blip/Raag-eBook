@@ -32,6 +32,14 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   try { T.start(customer); } catch (e) {}
+  // Razorpay itself already confirmed this payment on the checkout page
+  // (handler) or the server did (recovered). Fire Purchase straight away
+  // rather than after the server check, which can take a while; buyers who
+  // close the page early are no longer lost. Usually it has already fired on
+  // the checkout page, and the per-payment flag stops a second one.
+  if (stored.paymentId === paymentId && (stored.via === "handler" || stored.via === "recovered")) {
+    try { T.purchase({ paymentId: paymentId, value: C.PRODUCT_PRICE, orderRef: data.attemptId }); } catch (e) {}
+  }
 
   var yearEl = $("year"); if (yearEl) yearEl.textContent = new Date().getFullYear();
 

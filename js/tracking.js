@@ -47,6 +47,11 @@
       if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = "2.0"; n.queue = []; t = b.createElement(e); t.async = !0;
       t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
     }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+    // Switch off Meta's automatic events. They were sending a noisy
+    // "SubscribedButtonClick" for every button tap (FAQ, preview arrows, …),
+    // low-match events that add nothing to the 4 events below. Must run
+    // before fbq('init').
+    fbq("set", "autoConfig", false, PIXEL_ID);
   }
 
   /* ---- Build the advanced-matching object from customer details. Plain text
@@ -60,7 +65,7 @@
     if (email) d.em = email;
     if (p10.length === 10) d.ph = "91" + p10;
     if (n.first) d.fn = n.first.toLowerCase();
-    if (n.last) d.ln = n.last.toLowerCase();
+    if (n.last) d.ln = n.last.split(" ").pop().toLowerCase();   // last word = surname (same as the server/CAPI)
     return d;
   }
 

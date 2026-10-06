@@ -61,7 +61,16 @@ window.CONFIG = Object.freeze({
   // flight at that moment, checkout waits AT MOST this long for it, then opens
   // anyway without an order (the server still verifies + captures the
   // payment). Set to 0 to never wait at all.
-  ORDER_MAX_WAIT_MS: 1500,
+  // 1.5 s was too short: an Apps Script cold start often takes 2–4 s, so some
+  // checkouts opened WITHOUT an order (payment then depends on server capture).
+  // The site now also wakes Apps Script up on page load (a cheap "ping").
+  ORDER_MAX_WAIT_MS: 4000,
+
+  // ---- Meta matching ----
+  // Looks up the visitor's public IP (api64.ipify.org, 2.5 s timeout, never
+  // blocks anything) so server-side CAPI events can include client_ip_address —
+  // Apps Script cannot see the buyer's IP itself. Set false to switch off.
+  CAPTURE_IP_FOR_CAPI: true,
 
   // ---- "Our Student Reviews" section ----
   // Add REAL reviews from students of this eBook here (with their permission).
