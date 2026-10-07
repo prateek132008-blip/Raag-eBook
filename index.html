@@ -1,596 +1,316 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en-IN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>30 Raag — Raag Sangrah eBook in English Sargam Notation (₹649) | The Flute Room</title>
-<meta name="description" content="A digital eBook covering 30 important Raags of Hindustani classical music — Thaat, Jaati, Vadi–Samvadi, Aaroh–Avroh, Pakad, Bandish and Taans in clear English sargam notation. Printable A4 pages, lifetime access, ₹649 (was ₹2,100).">
-<meta name="theme-color" content="#8E1B1B">
-
-<!-- Open Graph (link previews on WhatsApp / Facebook).
-     Once your domain is live, change og:image to the FULL URL, e.g.
-     https://YOUR-DOMAIN/assets/og-image-raag-sangrah.jpg  (see SETUP_GUIDE.md → Deployment) -->
-<meta property="og:type" content="product">
-<meta property="og:title" content="30 Raag — Raag Sangrah eBook in English Sargam Notation">
-<meta property="og:description" content="30 Raag · Bandish, Aaroh–Avroh, Pakad &amp; Taan in English sargam notation · Printable A4 · Lifetime access · ₹649 (was ₹2,100)">
-<meta property="og:image" content="https://fluteroom.shop/assets/og-image-raag-sangrah.jpg">
-<link rel="icon" href="assets/raag-sangrah-cover-200.webp" type="image/webp">
-
-<!-- Performance: connect early to the hosts checkout needs -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://checkout.razorpay.com">
-<link rel="preconnect" href="https://api.razorpay.com">
-<link rel="preconnect" href="https://script.google.com">
-<link rel="preload" as="image" href="assets/raag-sangrah-cover-760.webp" imagesrcset="assets/raag-sangrah-cover-480.webp 480w, assets/raag-sangrah-cover-760.webp 760w" imagesizes="(max-width: 430px) 200px, (max-width: 980px) 230px, 380px" fetchpriority="high">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=Noto+Serif+Devanagari:wght@500;600&display=swap">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/ebook.css">
-<style>
-  /* "See What's Inside" — secondary hero button (links to #preview) */
-  .ebook-hero .hero-actions { align-items: center; }
-  .btn-preview { padding: 16px 26px; border-color: var(--orange); color: var(--orange); background: var(--white); }
-  .btn-preview:hover { background: var(--orange); color: #fff; }
-  #preview { scroll-margin-top: 70px; }
-</style>
-
-<!-- Scripts: all deferred (never block rendering) and run in this order.
-     config → common → tracking (the ONLY Meta Pixel code) → Razorpay → page -->
-<script src="js/config.js" defer></script>
-<script src="js/common.js" defer></script>
-<script src="js/tracking.js" defer></script>
-<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
-<script src="js/ebook.js" defer></script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "name": "30 Raag — Raag Sangrah: Bandish, Aaroh–Avroh, Pakad & Taan in English Sargam Notation",
-  "description": "Digital eBook covering 30 Raags of Hindustani classical music, each with a Raag introduction, Aaroh–Avroh, Pakad, Bandish and Taans in English sargam notation. Printable A4 pages, lifetime digital access.",
-  "brand": { "@type": "Brand", "name": "The Flute Room" },
-  "inLanguage": "en",
-  "offers": { "@type": "Offer", "price": "649", "priceCurrency": "INR", "availability": "https://schema.org/InStock" }
-}
-</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Online 1-on-1 Guitar Classes with Abhishek Nayak | Sangeet Seekho</title>
+  <meta name="description" content="Live one-on-one guitar classes with Abhishek Nayak. Fingerstyle, chords and film songs, with handwritten notes and Sargam after every class.">
+  <link rel="canonical" href="https://sangeetseekho.com/">
+  <meta name="theme-color" content="#1F150F">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Sangeet Seekho">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:url" content="https://sangeetseekho.com/">
+  <meta property="og:title" content="Online 1-on-1 Guitar Classes with Abhishek Nayak">
+  <meta property="og:description" content="Live one-on-one guitar classes — fingerstyle, chords and film songs, with handwritten notes after every class.">
+  <meta property="og:image" content="https://sangeetseekho.com/assets/img/og/og-online-classes.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Online 1-on-1 Guitar Classes with Abhishek Nayak">
+  <meta name="twitter:image" content="https://sangeetseekho.com/assets/img/og/og-online-classes.jpg">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/img/brand/favicon-light-48.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/img/brand/favicon-dark-48.png" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/img/brand/favicon-dark-180.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preload" href="/assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" as="image" type="image/webp" href="/assets/img/hero/abhishek-acoustic-600.webp" imagesrcset="/assets/img/hero/abhishek-acoustic-600.webp 600w, /assets/img/hero/abhishek-acoustic.webp 939w" imagesizes="(max-width: 900px) 100vw, 50vw">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/sections.css">
+  <script type="module" src="/js/pages/online-class.js"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"EducationalOrganization","name":"Sangeet Seekho","url":"https://sangeetseekho.com/","logo":"https://sangeetseekho.com/assets/img/brand/icon-512.png","email":"sangeetseekho9@gmail.com","telephone":"+91-9754751793","founder":{"@type":"Person","name":"Abhishek Nayak"},"description":"Online 1-on-1 guitar classes and handwritten guitar eBooks by Abhishek Nayak."}
+  </script>
 </head>
-<body>
+<body class="page-classes">
+  <header class="site-header" data-site-header></header>
 
-<!-- ============================= HEADER (same as the Alankaar site) ============================= -->
-<header class="site-header" id="siteHeader">
-  <div class="container">
-    <a href="index.html" class="logo">The Flute <span>Room</span></a>
-    <nav class="nav-links" aria-label="Page sections">
-      <a href="#raag-list">The 30 Raag</a>
-      <a href="#preview">Preview</a>
-      <a href="#inside">What's Inside</a>
-      <a href="#reviews">Reviews</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-    <div class="header-cta">
-      <a href="#buy" class="btn btn-primary">Get the eBook</a>
-      <button class="nav-toggle" id="navToggle" aria-label="Open menu" type="button">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
-</header>
-
-<div class="mobile-drawer" id="mobileDrawer">
-  <button class="drawer-close" id="drawerClose" aria-label="Close menu" type="button">&times;</button>
-  <a href="#raag-list">The 30 Raag</a>
-  <a href="#preview">Preview</a>
-  <a href="#inside">What's Inside</a>
-  <a href="#reviews">Reviews</a>
-  <a href="#faq">FAQ</a>
-  <a href="#buy" class="btn btn-primary btn-block">Get the eBook</a>
-</div>
-
-<div class="recovery-banner" id="recoveryBanner" role="status" aria-live="polite"></div>
-
-<main>
-<!-- ============================= HERO ============================= -->
-<section class="ebook-hero">
-  <div class="container">
-    <div class="ebook-hero-copy reveal">
-      <div class="eyebrow">Digital eBook · Hindustani Classical Music</div>
-      <h1>30 Raag <span class="h1-sub">Detailed Raag Introduction &amp; Notation</span></h1>
-      <p class="ebook-hero-tagline">Raag Sangrah — Bandish, Aaroh–Avroh, Pakad &amp; Taan in English Sargam Notation</p>
-      <p class="lede">Understand each Raag before you play or sing it. Thirty important Raags — each with its Thaat, Jaati, Vadi–Samvadi, Aaroh–Avroh, Pakad, a Bandish and Taans — written out in clear English sargam notation, in one organised reference you can print and practise from.</p>
-
-      <ul class="ebook-hero-points">
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>30 Raag</li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Clear English sargam notation</li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Bandish, Pakad &amp; Taans</li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Printable A4 pages</li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Lifetime access</li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Instant digital delivery</li>
-      </ul>
-
-      <div class="ebook-price-block">
-        <div class="ebook-price-main">
-          <s class="ebook-price-original" data-original-price aria-label="Original price">₹2,100</s>
-          <span class="ebook-price-arrow" aria-hidden="true">→</span>
-          <span class="ebook-price" data-price>₹649</span>
-        </div>
-        <div class="ebook-price-sub">
-          <span class="ebook-save-badge" data-save-badge>You save ₹1,451</span>
-          <span class="ebook-access-pill">🔒 Lifetime Access</span>
-        </div>
-        <span class="ebook-countdown" data-offer-timer hidden>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-          Offer ends in <span class="ebook-countdown-time" data-offer-time>60:00</span>
-        </span>
+  <main id="main">
+    <!-- ============ 1. HERO ============ -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-media">
+        <picture>
+          <source type="image/webp" srcset="/assets/img/hero/abhishek-acoustic-600.webp 600w, /assets/img/hero/abhishek-acoustic.webp 939w" sizes="(max-width: 900px) 100vw, 50vw">
+          <img src="/assets/img/hero/abhishek-acoustic.jpg" alt="Abhishek Nayak playing acoustic guitar in his teaching studio" width="939" height="1676" fetchpriority="high" decoding="async">
+        </picture>
       </div>
-
-      <div class="hero-actions">
-        <span class="cta-wrap"><a href="#buy" class="btn btn-primary btn-cta">Get Lifetime Access — <span data-price>₹649</span>
-          <svg class="cta-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></span>
-        <!-- Secondary button: scrolls to the Free Preview section -->
-        <a href="#preview" class="btn btn-outline btn-preview">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-          See What's Inside</a>
-      </div>
-      <p class="ebook-hero-note">One-time payment · Secure checkout by Razorpay · Download link on Google Drive right after payment</p>
-    </div>
-
-    <div class="ebook-showcase reveal">
-      <div class="ebook-cover-frame">
-        <img src="assets/raag-sangrah-cover-760.webp"
-             srcset="assets/raag-sangrah-cover-480.webp 480w, assets/raag-sangrah-cover-760.webp 760w"
-             sizes="(max-width: 430px) 200px, (max-width: 980px) 230px, 380px"
-             width="760" height="1208" fetchpriority="high" decoding="async"
-             alt="Cover of the eBook — 30 Famous Raags: A Complete Guide with Theory and Swara Notation, by Prateek Jha, The Flute Room">
-      </div>
-      <div class="ebook-ground-shadow" aria-hidden="true"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================= THE 30 RAAG ============================= -->
-<section class="alt" id="raag-list">
-  <div class="container">
-    <div class="section-head center reveal">
-      <div class="eyebrow">The 30 Raag</div>
-      <h2>Which Raags are included?</h2>
-      <p>From foundational Raags like Yaman, Bhupali and Bilawal to Darbari Kanhada, Malkauns and Puriya Dhanashri — all 30 are in the eBook.</p>
-    </div>
-    <div class="raag-grid reveal">
-      <div class="raag-chip"><span class="en">Abhogi Kanhada</span><span class="hi" lang="hi">आभोगी कान्हड़ा</span></div>
-      <div class="raag-chip"><span class="en">Adana</span><span class="hi" lang="hi">अड़ाना</span></div>
-      <div class="raag-chip"><span class="en">Asavari</span><span class="hi" lang="hi">आसावरी</span></div>
-      <div class="raag-chip"><span class="en">Bageshri</span><span class="hi" lang="hi">बागेश्वरी</span></div>
-      <div class="raag-chip"><span class="en">Bahar</span><span class="hi" lang="hi">बहार</span></div>
-      <div class="raag-chip"><span class="en">Bhairav</span><span class="hi" lang="hi">भैरव</span></div>
-      <div class="raag-chip"><span class="en">Bhairavi</span><span class="hi" lang="hi">भैरवी</span></div>
-      <div class="raag-chip"><span class="en">Bhimpalasi</span><span class="hi" lang="hi">भीमपलासी</span></div>
-      <div class="raag-chip"><span class="en">Bhupali</span><span class="hi" lang="hi">भूपाली</span></div>
-      <div class="raag-chip"><span class="en">Bihag</span><span class="hi" lang="hi">बिहाग</span></div>
-      <div class="raag-chip"><span class="en">Bilawal</span><span class="hi" lang="hi">बिलावल</span></div>
-      <div class="raag-chip"><span class="en">Brindavani Sarang</span><span class="hi" lang="hi">वृंदावनी सारंग</span></div>
-      <div class="raag-chip"><span class="en">Darbari Kanhada</span><span class="hi" lang="hi">दरबारी कान्हड़ा</span></div>
-      <div class="raag-chip"><span class="en">Desh</span><span class="hi" lang="hi">देस</span></div>
-      <div class="raag-chip"><span class="en">Deshkar</span><span class="hi" lang="hi">देशकार</span></div>
-      <div class="raag-chip"><span class="en">Durga</span><span class="hi" lang="hi">दुर्गा</span></div>
-      <div class="raag-chip"><span class="en">Hameer</span><span class="hi" lang="hi">हमीर</span></div>
-      <div class="raag-chip"><span class="en">Hindol</span><span class="hi" lang="hi">हिंडोल</span></div>
-      <div class="raag-chip"><span class="en">Jaijaiwanti</span><span class="hi" lang="hi">जैजैवंती</span></div>
-      <div class="raag-chip"><span class="en">Jaunpuri</span><span class="hi" lang="hi">जौनपुरी</span></div>
-      <div class="raag-chip"><span class="en">Kafi</span><span class="hi" lang="hi">काफ़ी</span></div>
-      <div class="raag-chip"><span class="en">Kamod</span><span class="hi" lang="hi">कामोद</span></div>
-      <div class="raag-chip"><span class="en">Khamaj</span><span class="hi" lang="hi">खमाज</span></div>
-      <div class="raag-chip"><span class="en">Malkauns</span><span class="hi" lang="hi">मालकौंस</span></div>
-      <div class="raag-chip"><span class="en">Multani</span><span class="hi" lang="hi">मुलतानी</span></div>
-      <div class="raag-chip"><span class="en">Puriya Dhanashri</span><span class="hi" lang="hi">पूरिया धनाश्री</span></div>
-      <div class="raag-chip"><span class="en">Purvi</span><span class="hi" lang="hi">पूर्वी</span></div>
-      <div class="raag-chip"><span class="en">Shankara</span><span class="hi" lang="hi">शंकरा</span></div>
-      <div class="raag-chip"><span class="en">Vibhas</span><span class="hi" lang="hi">विभास</span></div>
-      <div class="raag-chip"><span class="en">Yaman</span><span class="hi" lang="hi">यमन</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================= FREE PREVIEW ============================= -->
-<section id="preview">
-  <div class="container">
-    <div class="section-head center reveal">
-      <div class="eyebrow">Free Preview</div>
-      <h2>Look inside before you buy</h2>
-      <p>Real pages from the eBook — the index, the notation guide and two complete Raag pages.</p>
-    </div>
-    <div class="ebook-preview-card reveal">
-      <div class="ebook-preview-viewer">
-        <span class="ebook-preview-badge">Free Preview</span>
-        <img id="previewImg" src="assets/preview/raag-new-preview-1.webp" width="1200" height="1698" loading="lazy" decoding="async" draggable="false"
-             alt="Sample page from the 30 Raag eBook: Index of all 30 Raags">
-        <div class="ebook-preview-watermark" aria-hidden="true"></div>
-
-        <!-- Final preview slide: "Unlock Full Raag eBook" (your design image).
-             The whole slide is a link to the checkout form (#buy). -->
-        <div class="ebook-unlock" id="previewUnlock" hidden>
-          <a href="#buy" class="ebook-unlock-link" aria-label="Unlock the full Raag eBook — ₹2,100, now ₹649. Go to checkout.">
-            <img src="assets/preview/raag-unlock-full-ebook.webp" width="1054" height="1492" loading="lazy" decoding="async" draggable="false"
-                 alt="Unlock Full Raag eBook — get complete access to all 30 famous Raags with detailed theory and swara notation. For just ₹649 (was ₹2,100). Lifetime access.">
-          </a>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> Live · 1-on-1 · Online</p>
+          <h1 id="hero-title">Guitar classes where your teacher <span class="hl">watches every finger.</span></h1>
+          <p class="lead">Learn fingerstyle, chords and film songs live with <strong>Abhishek Nayak</strong> — just you and your teacher.</p>
+          <!-- First-screen choice: classes (scroll down) or eBooks (pick one) -->
+          <div class="chooser" data-chooser>
+            <p class="chooser-q">What would you like to start with?</p>
+            <div class="chooser-main">
+              <button type="button" class="choice" data-choose="classes">
+                <span class="choice-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+                <span class="choice-txt"><b>Online 1-on-1 Classes</b><small>Live with Abhishek</small></span>
+                <span class="choice-arrow" aria-hidden="true">↓</span>
+              </button>
+              <button type="button" class="choice" data-choose="ebooks" aria-expanded="false" aria-controls="chooser-ebooks">
+                <span class="choice-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+                <span class="choice-txt"><b>eBooks</b><small>Learn at your own pace</small></span>
+                <span class="choice-arrow" aria-hidden="true">›</span>
+              </button>
+            </div>
+            <div class="chooser-sub" id="chooser-ebooks" hidden>
+              <a class="sub-choice" href="/fingerstyle-guitar-ebook/">
+                <img src="/assets/img/ebooks/fingerstyle-flat-360.jpg" alt="" width="40" height="57" loading="lazy">
+                <span><b>Fingerstyle eBook</b><small>Melody + bass, with Sargam</small></span><span aria-hidden="true">→</span>
+              </a>
+              <a class="sub-choice" href="/chord-modulation-theory/">
+                <img src="/assets/img/ebooks/chord-modulation-flat-360.jpg" alt="" width="40" height="57" loading="lazy">
+                <span><b>Chord Modulation eBook</b><small>Change keys like film songs</small></span><span aria-hidden="true">→</span>
+              </a>
+            </div>
+            <!-- Online Course: not live yet — deliberately NOT a link/button (no action). -->
+            <div class="choice choice--soon" aria-label="Online Course — coming soon">
+              <span class="choice-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><polygon points="10 8 16 12 10 16 10 8"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg></span>
+              <span class="choice-txt"><b>Online Course</b><small>Self-paced video lessons</small></span>
+              <span class="soon-badge">Coming Soon</span>
+            </div>
+          </div>
+          <ul class="hero-proof">
+            <li><span class="stars" aria-hidden="true">★★★★★</span> Loved by students</li>
+            <li>India · Malaysia · Poland · UK · Canada</li>
+          </ul>
         </div>
       </div>
-      <p class="ebook-preview-caption" id="previewCaption" aria-live="polite">Index — all 30 Raags</p>
-      <div class="ebook-preview-nav">
-        <button type="button" class="slider-btn" id="previewPrev" aria-label="Previous preview page">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <span class="ebook-preview-counter" id="previewCounter">1 / 5</span>
-        <button type="button" class="slider-btn" id="previewNext" aria-label="Next preview page">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-      </div>
-      <p class="ebook-preview-note">View-only sample pages. The downloadable eBook is delivered after purchase.</p>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ============================= WHAT IS A RAAG INTRODUCTION? ============================= -->
-<section class="alt" id="about-raag">
-  <div class="container">
-    <div class="section-head center reveal">
-      <div class="eyebrow">Getting Started</div>
-      <h2>Know the Raag, then play or sing it</h2>
-      <p>A Raag is more than a scale. It has its own notes to emphasise, its own way of ascending and descending, a characteristic phrase and a time of day. The <strong>Raag introduction</strong> covers all of that — and the <strong>notation</strong> lets you practise it.</p>
-    </div>
-    <div class="learn-path reveal-stagger" aria-label="Learning path">
-      <div class="learn-step"><span class="n">01</span><strong>Hindustani Classical Music</strong></div>
-      <div class="learn-arrow" aria-hidden="true">→</div>
-      <div class="learn-step"><span class="n">02</span><strong>Raag Understanding</strong></div>
-      <div class="learn-arrow" aria-hidden="true">→</div>
-      <div class="learn-step"><span class="n">03</span><strong>Raag Introduction</strong></div>
-      <div class="learn-arrow" aria-hidden="true">→</div>
-      <div class="learn-step"><span class="n">04</span><strong>Notation</strong></div>
-      <div class="learn-arrow" aria-hidden="true">→</div>
-      <div class="learn-step"><span class="n">05</span><strong>Practice</strong></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================= WHAT EACH RAAG COVERS (reuses .why-grid) ============================= -->
-<section id="inside">
-  <div class="container why-grid">
-    <div class="reveal">
-      <div class="eyebrow">What's Inside</div>
-      <h2 style="font-size:clamp(28px,4vw,42px);">Every Raag, laid out the same clear way</h2>
-      <p style="color:var(--ink-soft); margin-top:12px;">Each Raag in the eBook follows a consistent structure, so once you've read one, you know exactly where to look in the next. You study the identity of the Raag first, then a composition in notation, then practice material.</p>
-      <p style="color:var(--ink-soft); margin-top:14px;">The eBook is <strong>clearly typeset in English sargam notation</strong> (S R G M P D N), with Bandish lyrics transliterated into Roman script — easy to read and easy to follow on your music stand.</p>
-    </div>
-    <div class="why-list reveal-stagger">
-      <div class="why-item"><span class="why-num">01</span><div><h4>Thaat, Jaati &amp; Swar</h4><p>The parent thaat, the jaati (for example Sampurna–Sampurna or Audav–Audav) and which swars are komal, teevra or varjit.</p></div></div>
-      <div class="why-item"><span class="why-num">02</span><div><h4>Vadi–Samvadi &amp; Gayan Samay</h4><p>The most important notes of the Raag and its traditional time of performance.</p></div></div>
-      <div class="why-item"><span class="why-num">03</span><div><h4>Aroh, Avroh &amp; Pakad</h4><p>How the Raag ascends and descends, and the characteristic phrase that identifies it.</p></div></div>
-      <div class="why-item"><span class="why-num">04</span><div><h4>Bandish in Notation</h4><p>A composition with Sthayi and Antara, written out beat by beat with the taal marks (Sam, Khali, Taali) shown.</p></div></div>
-      <div class="why-item"><span class="why-num">05</span><div><h4>Taans for Practice</h4><p>Written-out taans you can practise once you are comfortable with the Raag's movement.</p></div></div>
-      <p style="font-size:13px;color:var(--ink-soft);">Details vary slightly from Raag to Raag — see the free preview pages above.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ============================= FEATURES ============================= -->
-<section class="alt" id="features">
-  <div class="container">
-    <div class="section-head center reveal">
-      <div class="eyebrow">Features</div>
-      <h2>A Raag reference built for real practice</h2>
-      <p>Everything you need to study a Raag's identity and notation, in one place.</p>
-    </div>
-    <div class="ebook-benefit-grid reveal-stagger">
-      <div class="benefit-card"><div class="benefit-icon" aria-hidden="true">🎼</div><h3>30 Detailed Raag</h3><p>Explore 30 carefully structured Raags with their essential musical information.</p></div>
-      <div class="benefit-card"><div class="benefit-icon" aria-hidden="true">🔤</div><h3>Clear English Notation</h3><p>Every Raag is written in easy-to-read English sargam notation (S R G M P D N).</p></div>
-      <div class="benefit-card"><div class="benefit-icon" aria-hidden="true">📜</div><h3>Detailed Raag Introduction</h3><p>Understand the identity, structure and characteristics of each Raag before you practise it.</p></div>
-      <div class="benefit-card"><div class="benefit-icon" aria-hidden="true">🎵</div><h3>Bandish &amp; Taans</h3><p>Study compositions and taans in organised notation, with the taal divisions marked.</p></div>
-      <div class="benefit-card"><div class="benefit-icon" aria-hidden="true">🖨️</div><h3>Printable A4 Format</h3><p>Download and print the pages whenever you want — keep them on your music stand.</p></div>
-      <div class="benefit-card"><div class="benefit-icon" aria-hidden="true">🔒</div><h3>Lifetime Access</h3><p>Pay once. Your Google Drive access to the digital eBook doesn't expire.</p></div>
-      <div class="benefit-card"><div class="benefit-icon" aria-hidden="true">📖</div><h3>How-to-Read Section</h3><p>A dedicated section explains how to understand the notation before you begin.</p></div>
-      <div class="benefit-card"><div class="benefit-icon" aria-hidden="true">💬</div><h3>WhatsApp Support</h3><p>Help with payment, access and download questions for this eBook.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================= MULTI-INSTRUMENT ============================= -->
-<section class="highlight-banner" id="instruments" style="padding:70px 0;">
-  <div class="container">
-    <div class="section-head center reveal" style="margin-bottom:34px;">
-      <div class="eyebrow">For Every Hindustani Classical Learner</div>
-      <h2>Learn Raag — use the knowledge across instruments</h2>
-      <p>Raag knowledge isn't tied to one instrument. The same Raag introductions and notation support learners of:</p>
-    </div>
-    <div class="instrument-row reveal-stagger">
-      <span class="instrument-chip"><span aria-hidden="true">🪈</span>Bansuri</span>
-      <span class="instrument-chip"><span aria-hidden="true">🎹</span>Harmonium</span>
-      <span class="instrument-chip"><span aria-hidden="true">🪕</span>Sitar</span>
-      <span class="instrument-chip"><span aria-hidden="true">🎤</span>Vocal music</span>
-      <span class="instrument-chip"><span aria-hidden="true">🎶</span>Other Hindustani classical instruments</span>
-    </div>
-    <p class="fine-note">This eBook is a Raag reference and notation resource. It does not teach playing or singing technique for any specific instrument.</p>
-  </div>
-</section>
-
-<!-- ============================= HOW TO READ ============================= -->
-<section id="how-to-read">
-  <div class="container">
-    <div class="howto-card reveal">
-      <div class="howto-icon" aria-hidden="true">📖</div>
-      <div>
-        <div class="eyebrow">Beginner-Friendly</div>
-        <h2>New to sargam notation? Start with “How to Read”.</h2>
-        <p>Not familiar with the notation system yet? The eBook opens with a dedicated <strong>How to Read the Notation</strong> page — komal and teevra swars, upper and lower octaves, held notes and taal marks — so the Raag pages make sense from the very first one.</p>
-        <p style="margin-top:10px;font-size:14px;">Basic familiarity with sargam (Sa Re Ga Ma…) will help you get the most out of the book.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================= PRODUCT INFORMATION ============================= -->
-<section class="alt" id="product-info">
-  <div class="container">
-    <div class="section-head center reveal">
-      <div class="eyebrow">Product Information</div>
-      <h2>30 Raag — Detailed Raag Introduction &amp; Notation</h2>
-    </div>
-    <div class="ebook-info-card reveal">
-      <ul class="ebook-info-list">
-        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Title:</strong> Raag Sangrah — A Collection of Bandish, Aaroh–Avroh, Pakad &amp; Taan in English Sargam Notation</span></li>
-        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Language:</strong> English, with sargam in English (Roman) notation</span></li>
-        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Contents:</strong> 30 Raags, each with a Raag introduction, Aaroh–Avroh, Pakad, Bandish and Taans, plus a How to Read the Notation section</span></li>
-        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Format:</strong> Digital eBook (PDF), 91 A4 pages — printable</span></li>
-        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Delivery:</strong> Google Drive download link, shown right after successful payment and also emailed to you</span></li>
-        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Access:</strong> Lifetime access — one-time payment, no renewals</span></li>
-        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Useful for:</strong> Learners of bansuri, harmonium, sitar, vocal and other Hindustani classical instruments</span></li>
-        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Price:</strong> <span data-price>₹649</span> <s data-original-price>₹2,100</s> · no shipping — this is a digital product</span></li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ============================= OUR STUDENT REVIEWS =============================
-     Filled from CONFIG.REVIEWS in js/config.js (name, instrument, text).
-     The whole section stays hidden until at least one real review is added. -->
-<section id="reviews" hidden>
-  <div class="container">
-    <div class="section-head center reveal">
-      <div class="eyebrow">Our Student Reviews</div>
-      <h2>What our students say</h2>
-    </div>
-    <div class="ebook-review-grid" id="reviewGrid"></div>
-  </div>
-</section>
-
-<!-- ============================= HOW IT WORKS ============================= -->
-<section class="alt" id="how-it-works">
-  <div class="container">
-    <div class="section-head center reveal">
-      <div class="eyebrow">How It Works</div>
-      <h2>From payment to practice in minutes</h2>
-    </div>
-    <div class="steps-grid reveal-stagger">
-      <div class="step-card"><div class="step-num">1</div><h4>Enter your details</h4><p>Name, email and WhatsApp number — used only to deliver your eBook and help you if needed.</p></div>
-      <div class="step-card"><div class="step-num">2</div><h4>Pay securely</h4><p>UPI, cards, net banking or wallets through Razorpay's secure checkout.</p></div>
-      <div class="step-card"><div class="step-num">3</div><h4>Download your eBook</h4><p>Your Google Drive download button appears right after payment. The link is also emailed to you.</p></div>
-      <div class="step-card"><div class="step-num">4</div><h4>Print &amp; practise</h4><p>Start with the How to Read the Notation page, then work through the Raags at your own pace.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================= FAQ ============================= -->
-<section id="faq">
-  <div class="container">
-    <div class="section-head center reveal">
-      <div class="eyebrow">FAQs</div>
-      <h2>Questions, answered</h2>
-    </div>
-    <div class="faq-list">
-      <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Is this eBook only for flute players? <span class="plus">+</span></button>
-        <div class="faq-a"><p>No. It is based on Hindustani classical music, so the Raag introductions and notation are useful whether you learn bansuri, harmonium, sitar, vocal music or another Hindustani classical instrument.</p></div></div>
-      <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">What language is the eBook in? <span class="plus">+</span></button>
-        <div class="faq-a"><p>The eBook is written in English, with the sargam in English (Roman) notation — S R G M P D N — and the Bandish lyrics transliterated into Roman script.</p></div></div>
-      <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">I've never read sargam notation. Can I still use it? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Yes — the eBook opens with a dedicated How to Read the Notation page that explains every symbol before you begin. Basic familiarity with sargam (Sa Re Ga Ma…) will help.</p></div></div>
-      <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Does it teach how to play an instrument? <span class="plus">+</span></button>
-        <div class="faq-a"><p>No. This is a Raag reference and notation resource. It helps you understand and practise Raags, but it does not teach playing or singing technique for any specific instrument.</p></div></div>
-      <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">How will I receive the eBook? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Right after a successful payment you're taken to your download page, where a Google Drive download button appears. The same link is also emailed to the address you enter.</p></div></div>
-      <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Can I print the pages? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Yes. The pages are A4 format and printable for your own personal practice.</p></div></div>
-      <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">What does "lifetime access" mean? <span class="plus">+</span></button>
-        <div class="faq-a"><p>You pay once and there are no renewals. Your access to the eBook through the Google Drive link does not expire. We also recommend downloading a copy to your own device.</p></div></div>
-      <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Money was debited but I didn't get my link. What should I do? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Please don't pay again. Message us on WhatsApp with your Payment ID or the email/phone you used, and we'll verify the payment and send your link.</p></div></div>
-      <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Can I share the eBook or the link? <span class="plus">+</span></button>
-        <div class="faq-a"><p>No. The eBook is licensed for your personal use only. Sharing, reselling or redistributing the file or the download link is not permitted.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================= CHECKOUT ============================= -->
-<section class="alt" id="buy">
-  <div class="container">
-    <div class="section-head center reveal">
-      <div class="eyebrow">Get Instant Access</div>
-      <h2>Get Lifetime Access — <span data-price>₹649</span></h2>
-      <p>Enter your details and pay securely. Your download button appears right after payment, and the link is emailed to you too.</p>
-    </div>
-
-    <div class="form-card">
-      <div class="ebook-checkout-summary">
-        <span>30 Raag eBook · Lifetime Access</span>
-        <span class="summary-price"><s class="ebook-checkout-price-original" data-original-price>₹2,100</s><strong data-price>₹649</strong></span>
-      </div>
-
-      <p class="checkout-timer" data-offer-timer hidden>⏳ Offer price ends in <span class="ebook-countdown-time" data-offer-time>60:00</span></p>
-
-      <form id="checkoutForm" novalidate autocomplete="on">
-        <div class="form-field full" style="margin-bottom:18px;">
-          <label for="fullName">Full Name</label>
-          <input type="text" id="fullName" name="fullName" placeholder="Your full name" autocomplete="name" maxlength="80" required>
-          <span class="form-error" data-error-for="fullName" aria-live="polite"></span>
+    <!-- ============ 2. WHY 1-ON-1 ============ -->
+    <section class="section section--tight" id="classes" aria-labelledby="why-title">
+      <div class="container">
+        <h2 id="why-title" class="h3 center">Why learn 1-on-1?</h2>
+        <div class="why-grid">
+          <div class="why" data-reveal><span class="why-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><b>Only you</b><span>Your pace, your songs</span></div>
+          <div class="why" data-reveal><span class="why-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><b>Live correction</b><span>Mistakes fixed in class</span></div>
+          <div class="why" data-reveal><span class="why-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></span><b>Handwritten notes</b><span>Tabs + Sargam every class</span></div>
+          <div class="why" data-reveal><span class="why-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-4-7.5L21 3l-1 4.5A9 9 0 0 1 21 12z"/></svg></span><b>WhatsApp support</b><span>Send practice videos</span></div>
         </div>
-        <div class="form-field full" style="margin-bottom:18px;">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" maxlength="120" required>
-          <span class="form-error" data-error-for="email" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <!-- ============ 3. LIVE CLASS PREVIEW ============ -->
+    <section class="section section--dark" id="live-class" aria-labelledby="live-title">
+      <div class="container">
+        <div class="split-head">
+          <div>
+            <p class="eyebrow">Real class recordings</p>
+            <h2 id="live-title">See a live class</h2>
+            <p class="lead">Teacher plays. You play back. Fixed on the spot.</p>
+          </div>
+          <a class="btn btn--primary" href="#enroll">I want this <span class="btn-arrow">→</span></a>
         </div>
-        <div class="form-field full" style="margin-bottom:6px;">
-          <label for="whatsapp">WhatsApp Number</label>
-          <input type="tel" id="whatsapp" name="whatsapp" placeholder="10-digit mobile number" autocomplete="tel" inputmode="tel" maxlength="16" required>
-          <span class="form-error" data-error-for="whatsapp" aria-live="polite"></span>
+        <div class="rail rail--4" data-live-videos></div>
+      </div>
+    </section>
+
+    <!-- ============ 4. HOW CLASSES WORK ============ -->
+    <section class="section section--tight" aria-labelledby="how-title">
+      <div class="container">
+        <h2 id="how-title" class="h3 center">How classes work</h2>
+        <ol class="flow">
+          <li data-reveal><b>Enquire</b><span>Fill the form</span></li>
+          <li data-reveal><b>Level check</b><span>Short intro call</span></li>
+          <li data-reveal><b>Fixed slot</b><span>Same time every week</span></li>
+          <li data-reveal><b>Learn & practise</b><span>Notes + WhatsApp feedback</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ 5. CURRICULUM (content: js/content/curriculum.js · PDF: assets/docs/) ============ -->
+    <section class="section section--sand" id="curriculum" aria-labelledby="curr-title">
+      <div class="container">
+        <div class="split-head">
+          <div>
+            <p class="eyebrow">Curriculum</p>
+            <h2 id="curr-title">3-month Bollywood fingerstyle curriculum</h2>
+            <p class="lead">From your first finger pattern to performing your own arrangement.</p>
+          </div>
+          <a class="btn btn--dark" data-curriculum-pdf href="/assets/docs/sangeetseekho-curriculum.pdf" download><span class="btn-label">Download full PDF</span> <span aria-hidden="true">↓</span></a>
         </div>
+        <div data-curriculum></div>
+      </div>
+    </section>
 
-        <span class="cta-wrap cta-block" style="margin-top:14px;"><button type="submit" class="btn btn-primary btn-block btn-cta" id="checkoutBtn">Get Lifetime Access — ₹649</button></span>
-        <div class="pay-state" id="payState" aria-live="polite"></div>
-
-        <div class="secure-row">
-          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>Secure payment by Razorpay</span>
-          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>UPI · Cards · Net banking</span>
+    <!-- ============ 6. TIMING ============ -->
+    <!-- ✏️ Slots are also in the enrollment form below — keep both lists the same. -->
+    <section class="section" id="timing" aria-labelledby="timing-title">
+      <div class="container container--narrow center">
+        <p class="eyebrow">Class timings (IST)</p>
+        <h2 id="timing-title">Pick your slot</h2>
+        <div class="slot-groups">
+          <div class="slot-group">
+            <h3><span aria-hidden="true">☀︎</span> Morning</h3>
+            <div class="slots">
+              <a href="#enroll" class="slot" data-pick-slot="Morning 8–9 AM">8–9 AM</a>
+              <a href="#enroll" class="slot" data-pick-slot="Morning 9–10 AM">9–10 AM</a>
+              <a href="#enroll" class="slot" data-pick-slot="Morning 10–11 AM">10–11 AM</a>
+            </div>
+          </div>
+          <div class="slot-group">
+            <h3><span aria-hidden="true">☾</span> Evening</h3>
+            <div class="slots">
+              <a href="#enroll" class="slot" data-pick-slot="Evening 6–7 PM">6–7 PM</a>
+              <a href="#enroll" class="slot" data-pick-slot="Evening 7–8 PM">7–8 PM</a>
+              <a href="#enroll" class="slot" data-pick-slot="Evening 8–9 PM">8–9 PM</a>
+              <a href="#enroll" class="slot" data-pick-slot="Evening 9–10 PM">9–10 PM</a>
+            </div>
+          </div>
         </div>
-        <button type="button" class="pay-help-link" id="payHelpLink">Having trouble paying? Other payment options</button>
-        <p style="font-size:12px;color:var(--ink-soft);text-align:center;margin-top:12px;">
-          By purchasing you agree to our <a href="policies/terms.html" style="text-decoration:underline;">Terms</a>,
-          <a href="policies/refund.html" style="text-decoration:underline;">Refund Policy</a> and
-          <a href="policies/privacy.html" style="text-decoration:underline;">Privacy Policy</a>.
-        </p>
-      </form>
-    </div>
-  </div>
-</section>
-</main>
-
-<!-- ============================= FOOTER (same structure as the Alankaar site) ============================= -->
-<footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="index.html" class="logo">The Flute <span>Room</span></a>
-        <p>Hindustani classical music learning resources and online classes. Creators of the 30 Raag eBook.</p>
+        <p class="muted small">1-hour live sessions · Zoom / Google Meet · Living abroad? We’ll match your time zone.</p>
       </div>
-      <div>
-        <h5>Explore</h5>
-        <ul>
-          <li><a href="#inside">What's Inside</a></li>
-          <li><a href="#preview">Free Preview</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="https://fluteroom.online/" rel="noopener">Flute Classes</a></li>
-        </ul>
+    </section>
+
+    <!-- ============ 7. TEACHER ============ -->
+    <section class="section section--sand" id="teacher" aria-labelledby="teacher-title">
+      <div class="container">
+        <div class="founder" data-teacher data-reveal></div>
+        <div class="teacher-video" data-reveal>
+          <p class="eyebrow">Hear him play</p>
+          <div data-teacher-video></div>
+        </div>
       </div>
-      <div>
-        <h5>Legal</h5>
-        <ul>
-          <li><a href="policies/terms.html">Terms &amp; Conditions</a></li>
-          <li><a href="policies/refund.html">Refund Policy</a></li>
-          <li><a href="policies/privacy.html">Privacy Policy</a></li>
-        </ul>
+    </section>
+
+    <!-- ============ 8. TESTIMONIALS ============ -->
+    <section class="section" id="reviews" aria-labelledby="reviews-title">
+      <div class="container">
+        <p class="eyebrow">Students</p>
+        <h2 id="reviews-title">In their words</h2>
+        <div data-reviews="class" data-review-kinds="text,image" data-limit="3"></div>
       </div>
-      <div>
-        <h5>Contact</h5>
-        <ul>
-          <li><a href="mailto:prateek132008@gmail.com">prateek132008@gmail.com</a></li>
-          <li><a href="https://wa.me/918709268496" target="_blank" rel="noopener">WhatsApp: +91 87092 68496</a></li>
-        </ul>
+    </section>
+
+    <!-- ============ 9. GURUS (small, respectful) ============ -->
+    <section class="gurus" aria-labelledby="gurus-title">
+      <div class="container gurus-inner">
+        <div>
+          <p class="eyebrow">With gratitude</p>
+          <h2 id="gurus-title" class="h4">Abhishek’s musical gurus</h2>
+          <p class="muted small">The teachers Abhishek learned from — their training shapes how he plays and teaches.</p>
+        </div>
+        <ul class="guru-list" data-gurus></ul>
       </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© <span id="year"></span> The Flute Room. All rights reserved.</span>
-      <span>Made with care for learners of Hindustani classical music.</span>
-    </div>
-  </div>
-</footer>
+    </section>
 
-<!-- ============================= STICKY MOBILE CTA ============================= -->
-<div class="sticky-cta" id="stickyCta">
-  <div class="price-tag">30 Raag eBook<strong><span data-price>₹649</span> <s class="sticky-original" data-original-price>₹2,100</s></strong></div>
-  <a href="#buy" class="btn btn-primary">Get Lifetime Access</a>
-</div>
-
-<!-- ============================= PAYMENT TROUBLE POPUP (manual UPI) =============================
-     Same popup as the Alankaar site. Opens only on tap. Details come from
-     CONFIG.PAYMENT_RECOVERY in js/config.js. -->
-<div class="pay-recovery-overlay" id="payRecovery" role="dialog" aria-modal="true" aria-labelledby="payRecoveryTitle" aria-hidden="true">
-  <div class="pay-recovery">
-    <button type="button" class="pay-recovery-close" id="payRecoveryClose" aria-label="Close">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <div class="pr-icon" aria-hidden="true">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/></svg>
-    </div>
-    <h3 id="payRecoveryTitle">Payment failed?</h3>
-    <p class="pr-lede">Retry the secure Razorpay checkout, or pay directly by UPI below.</p>
-    <p class="pr-warning"><strong>Already paid and money was debited?</strong> Please don't pay again — send us a screenshot on WhatsApp and we'll verify it and share your eBook.</p>
-
-    <button type="button" class="btn btn-primary btn-block" id="payRetryBtn">Try Payment Again</button>
-
-    <div class="pr-or">or pay by UPI</div>
-    <div class="pr-amount">Amount to pay: <s class="pr-price-original" data-original-price>₹2,100</s> <strong data-price>₹649</strong></div>
-
-    <div class="pr-block">
-      <div class="pr-label">Option 1 · Scan &amp; Pay</div>
-      <img class="pr-qr" id="payQrImg" src="" width="400" height="477" alt="UPI QR code to pay The Flute Room" loading="lazy" decoding="async">
-      <p class="pr-note">Scan the QR code using any UPI app and pay <strong data-price>₹649</strong>.</p>
-    </div>
-
-    <div class="pr-block">
-      <div class="pr-label">Option 2 · Pay using UPI ID</div>
-      <div class="pr-upi-row"><span class="pr-upi-id" id="payUpiId"></span><button type="button" class="pr-copy-btn" id="payCopyBtn">Copy UPI ID</button></div>
-      <div class="pr-copied" id="payCopied" role="status" aria-live="polite"></div>
-    </div>
-
-    <div class="pr-block" id="payPhoneBlock">
-      <div class="pr-label">Option 3 · Pay to Phone Number</div>
-      <div class="pr-upi-row"><span class="pr-upi-id" id="payPhoneNumber"></span><button type="button" class="pr-copy-btn" id="payCopyPhoneBtn">Copy Number</button></div>
-      <div class="pr-copied" id="payCopiedPhone" role="status" aria-live="polite"></div>
-      <p class="pr-payee">Name shown in your payment app: <strong id="payPhoneName"></strong><span>This is our official payment account.</span></p>
-      <p class="pr-note">Open any UPI app → <strong>Pay to phone number</strong> → paste the number → pay <strong data-price>₹649</strong>.</p>
-    </div>
-
-    <div class="pr-after">
-      <strong>After paying by UPI,</strong> send the payment screenshot on WhatsApp.
-      <a class="pr-wa-btn" id="payWhatsappBtn" href="#" target="_blank" rel="noopener">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.3c1.4.8 3.1 1.3 4.8 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
-        Send Payment Screenshot on WhatsApp
-      </a>
-      <ul class="pr-steps">
-        <li>We verify your payment from the screenshot</li>
-        <li>Your eBook link is then sent to you on WhatsApp and email</li>
-      </ul>
-    </div>
-
-    <div class="pr-apps">
-      <span class="pr-apps-label">Works with all UPI apps</span>
-      <div class="pr-app-card"><div class="pr-app-top" id="payAppTop"></div><div class="pr-app-row" id="payAppRow"></div></div>
-    </div>
-
-    <div class="pr-support">
-      Need help?<br>Call / WhatsApp: <strong id="paySupportNumber"></strong>
-      <div class="pr-support-actions">
-        <a id="payCallLink" href="#">📞 Call</a>
-        <a id="paySupportWhatsapp" href="#" target="_blank" rel="noopener">💬 WhatsApp</a>
+    <!-- ============ 10. EBOOKS ============ -->
+    <section class="section section--sand section--tight" aria-labelledby="books-title">
+      <div class="container">
+        <div class="split-head">
+          <div>
+            <p class="eyebrow">Learn between classes</p>
+            <h2 id="books-title" class="h3">Learn more with our guitar eBooks</h2>
+          </div>
+        </div>
+        <div class="shelf" data-book-shelf></div>
       </div>
-    </div>
-  </div>
-</div>
+    </section>
 
-<!-- Floating "Payment failed? — Pay here" button — always visible, just above
-     the WhatsApp button (full text on phones too). Opens the popup above. -->
-<button type="button" class="pay-help-float" id="payHelpFloat" aria-haspopup="dialog" aria-controls="payRecovery">
-  <span class="pay-help-float-inner"><span class="pay-dot" aria-hidden="true"></span>Payment failed? — <span class="pay-here">Pay here</span></span>
-</button>
+    <!-- ============ 11. FAQ ============ -->
+    <section class="section" id="faq" aria-labelledby="faq-title">
+      <div class="container container--narrow">
+        <h2 id="faq-title" class="h3 center">Quick answers</h2>
+        <div data-faq="classes,support"></div>
+      </div>
+    </section>
 
-<!-- ============================= WHATSAPP SUPPORT FLOAT ============================= -->
-<button class="whatsapp-float" id="supportFloat" type="button" aria-label="WhatsApp support for payment, access or download questions">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.3c1.4.8 3.1 1.3 4.8 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
-  <span class="label">Payment or download question? Chat with us</span>
-</button>
-<!-- Safety net: if any script fails to load/run, still show all content
-     (sections fade in via JS; without this a JS error leaves the page blank). -->
-<script>
-  setTimeout(function () {
-    var els = document.querySelectorAll(".reveal, .reveal-stagger");
-    for (var i = 0; i < els.length; i++) els[i].classList.add("is-visible");
-  }, 2500);
-</script>
+    <!-- ============ 12. ENROLL ============ -->
+    <section class="section section--dark enroll" id="enroll" aria-labelledby="enroll-title">
+      <div class="container enroll-grid">
+        <div class="enroll-copy">
+          <p class="eyebrow">Enroll</p>
+          <h2 id="enroll-title">Book your first class</h2>
+          <ul class="check-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>No payment now</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Fees &amp; slots shared on WhatsApp</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Takes 1 minute</span></li>
+          </ul>
+        </div>
+        <div class="enroll-card">
+          <form id="enroll-form" class="form" novalidate>
+            <div class="form-row">
+              <div class="field"><label for="enr-name">Full name</label><input id="enr-name" name="name" autocomplete="name" maxlength="60" data-validate="name" required></div>
+              <div class="field"><label for="enr-age">Age</label><input id="enr-age" name="age" type="number" inputmode="numeric" min="5" max="90" data-validate="age" required></div>
+            </div>
+            <div class="field"><label for="enr-phone">Phone number</label><input id="enr-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="98765 43210" maxlength="18" data-validate="phone" required></div>
+            <label class="check"><input type="checkbox" id="enr-same" checked> Same number on WhatsApp</label>
+            <div class="field"><label for="enr-whatsapp">WhatsApp number</label><input id="enr-whatsapp" name="whatsapp" type="tel" inputmode="tel" placeholder="+44 7700 900123" maxlength="18"></div>
+            <div class="field"><label for="enr-email">Email <small>(optional)</small></label><input id="enr-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="100" data-validate="emailOptional"></div>
+            <div class="form-row">
+              <div class="field"><label for="enr-level">Your level</label>
+                <select id="enr-level" name="level" data-validate="choice" required>
+                  <option value="">Choose…</option>
+                  <option>Complete beginner</option>
+                  <option>Know a few chords</option>
+                  <option>Intermediate</option>
+                  <option>Advanced</option>
+                </select></div>
+              <div class="field"><label for="enr-goal">Want to learn</label>
+                <select id="enr-goal" name="goal" data-validate="choice" required>
+                  <option value="">Choose…</option>
+                  <option>Fingerstyle guitar</option>
+                  <option>Bollywood / film songs</option>
+                  <option>Chords &amp; strumming</option>
+                  <option>Theory &amp; chord modulation</option>
+                  <option>Not sure — guide me</option>
+                </select></div>
+            </div>
+            <fieldset class="field slot-field">
+              <legend class="label">Preferred slot (IST)</legend>
+              <div class="slot-picker">
+                <span class="slot-picker-h">Morning</span>
+                <label class="slot-opt"><input type="radio" name="timing" value="Morning 8–9 AM" data-validate="choice"><span>8–9 AM</span></label>
+                <label class="slot-opt"><input type="radio" name="timing" value="Morning 9–10 AM" data-validate="choice"><span>9–10 AM</span></label>
+                <label class="slot-opt"><input type="radio" name="timing" value="Morning 10–11 AM" data-validate="choice"><span>10–11 AM</span></label>
+                <span class="slot-picker-h">Evening</span>
+                <label class="slot-opt"><input type="radio" name="timing" value="Evening 6–7 PM" data-validate="choice"><span>6–7 PM</span></label>
+                <label class="slot-opt"><input type="radio" name="timing" value="Evening 7–8 PM" data-validate="choice"><span>7–8 PM</span></label>
+                <label class="slot-opt"><input type="radio" name="timing" value="Evening 8–9 PM" data-validate="choice"><span>8–9 PM</span></label>
+                <label class="slot-opt"><input type="radio" name="timing" value="Evening 9–10 PM" data-validate="choice"><span>9–10 PM</span></label>
+              </div>
+            </fieldset>
+            <div class="field"><label for="enr-message">Message <small>(optional)</small></label><textarea id="enr-message" name="message" maxlength="600" placeholder="Songs you want to play, questions…" data-validate="text"></textarea></div>
+            <div class="hp-field" aria-hidden="true"><label>Leave this empty<input name="ss_extra" tabindex="-1" autocomplete="off"></label></div>
+            <button type="submit" class="btn btn--primary btn--lg btn--block"><span class="btn-label">Submit &amp; continue on WhatsApp</span></button>
+            <p class="form-status" hidden aria-live="polite"></p>
+            <p class="form-note">We’ll contact you on WhatsApp/phone. <a href="/privacy-policy/">Privacy</a></p>
+          </form>
+          <div class="form-done" hidden>
+            <div class="ty-badge" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <h3 class="h4">Saved! Opening WhatsApp…</h3>
+            <a class="btn btn--whatsapp" data-wa-fallback href="#" target="_blank" rel="noopener">WhatsApp didn’t open? Tap here</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 13. FINAL CTA ============ -->
+    <section class="final-cta" aria-labelledby="final-title">
+      <div class="container final-cta-inner">
+        <h2 id="final-title" class="h3">Your first class is one message away.</h2>
+        <div class="final-cta-btns">
+          <a class="btn btn--primary btn--lg" href="#enroll">Book a class</a>
+          <a class="btn btn--whatsapp btn--lg" href="https://wa.me/919754751793?text=Hi%20Sangeet%20Seekho%2C%20I%20want%20to%20know%20more%20about%20the%20Online%201-on-1%20Guitar%20Classes." target="_blank" rel="noopener">Chat on WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" data-site-footer></footer>
 </body>
 </html>
